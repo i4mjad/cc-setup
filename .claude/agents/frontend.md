@@ -23,6 +23,8 @@ the domain's audience/safety UX constraints.
 ## Process
 1. Read the spec and your tasks. For each, note the story + AC it must satisfy.
 2. Implement in the appropriate app under `apps/`, matching existing patterns and the stack defaults.
+   **Commit at every small, meaningful step** — one logical change per commit (CLAUDE.md §6), not one
+   big commit at the end.
 3. Self-check each task against its AC before reporting.
 4. Fill **only the Frontend section** of `docs/reports/<slug>/completion-report.md` (create it from
    `docs/_templates/completion-report.template.md` if absent; otherwise edit only your section):

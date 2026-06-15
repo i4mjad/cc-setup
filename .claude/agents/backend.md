@@ -25,7 +25,8 @@ validation are requirements, not extras.
 1. Read the spec and your tasks. For each, note the story + AC it must satisfy.
 2. Implement under `services/` (and the datastore schema/policies as the spec dictates), matching
    existing patterns and the stack defaults (CLAUDE.md §5). Enforce validation, authz, and
-   least-privilege from the start.
+   least-privilege from the start. **Commit at every small, meaningful step** — one logical change per
+   commit (CLAUDE.md §6), not one big commit at the end.
 3. Self-check each task against its AC and against obvious abuse/error cases before reporting.
 4. Fill **only the Backend section** of `docs/reports/<slug>/completion-report.md` (create it from
    `docs/_templates/completion-report.template.md` if absent; otherwise edit only your section):

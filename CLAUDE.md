@@ -116,6 +116,12 @@ Write code that is **clean, SOLID, DRY, and YAGNI — but SIMPLE above all.**
 - Match the style, naming, and idiom of surrounding code.
 - Security and privacy are requirements, not extras (see §4).
 
+**Commit discipline.** Commit at **every small, meaningful step** — one logical change per commit, with
+a clear message describing what and why. Don't batch unrelated changes into one commit, and don't wait
+until a whole task is finished: each self-contained increment that builds/passes is its own commit.
+This keeps history reviewable and every step easy to revert. The build agents (frontend, backend)
+commit as they go; the conductor never squashes these into a single end-of-task commit.
+
 ## 7. Traceability spine (must be preserved end to end)
 
 ```
