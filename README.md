@@ -34,20 +34,32 @@ business-analyst ──[HUMAN GATE]──▶ product-manager ──[HUMAN GATE]�
 - **Backward handoffs** are expected when upstream work is wrong/ambiguous (architect → PM → BA).
 - **Escalate-on-ambiguity**: downstream agents stop and ask rather than fill a real gap with a guess.
 
+## What's in this repo
+
+```
+CLAUDE.md                  # genericized governance — fill the <PLACEHOLDER>s per project
+.claude/agents/*.md        # the 9 agents (project-agnostic)
+docs/
+  ORCHESTRATION.md         # pipeline + handoff reference
+  _templates/*.md          # the 6 artifact templates the agents copy from
+```
+
 ## Reuse in a project
 
 ```bash
 # from your project root
-mkdir -p .claude/agents
-cp /path/to/agent-pipeline/.claude/agents/*.md .claude/agents/
+cp -R /path/to/agent-pipeline/.claude/agents .claude/agents
+cp    /path/to/agent-pipeline/CLAUDE.md .            # then fill in the <PLACEHOLDER>s
+mkdir -p docs && cp -R /path/to/agent-pipeline/docs/_templates docs/_templates
+cp    /path/to/agent-pipeline/docs/ORCHESTRATION.md docs/
 ```
 
-Then start the team with the conductor (e.g. `@conductor`) and your brief.
+Then open `CLAUDE.md` and replace every `<PLACEHOLDER>` (purpose, domain defaults, stack defaults)
+with your project's reality. Start the team with the conductor (e.g. `@conductor`) and your brief.
 
 ### Per-project notes
 
-- The agents reference **stack and domain defaults** (web/mobile/backend choices, market, audience).
-  Set these in your project's own `CLAUDE.md` so the agents inherit them — the agent files
-  themselves are project-agnostic.
-- The agents also expect artifact paths under `docs/` (requirements, product, architecture,
-  reports) and copy from templates under `docs/_templates/`. Add those to each project as needed.
+- The agents read **stack and domain defaults** (web/mobile/backend choices, market, audience,
+  localization) from the project's `CLAUDE.md`. The agent files themselves are project-agnostic.
+- The agents write artifacts under `docs/` (requirements, product, architecture, reports) and copy
+  from `docs/_templates/`. Those template files are generic and ready to use as-is.
