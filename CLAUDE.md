@@ -40,6 +40,7 @@ business-analyst ──▶ product-manager ──▶ architect ──▶ fronten
 
 | Handoff | Type |
 |---|---|
+| bootstrap intake interview → pipeline (new project only) | **HUMAN GATE** — stop for user approval of the filled §4/§5 defaults |
 | business-analyst → product-manager | **HUMAN GATE** — stop for user approval |
 | product-manager → architect | **HUMAN GATE** — stop for user approval |
 | architect → frontend + backend | automatic |
@@ -81,22 +82,29 @@ followed end to end. One slug = one initiative/epic.
 
 ## 4. Domain defaults
 
+> **Mandatory intake:** on a new project these MUST be **interviewed for and recorded here before any
+> pipeline work** — the conductor runs the bootstrap interview and stops at a human gate. **Never
+> inherit these from a prior project**; no agent may assume them. While any `<PLACEHOLDER>` below
+> remains, the project is unconfigured.
+
 These hold unless an artifact explicitly overrides them. Replace with your project's reality:
 
 - **Region / market:** <TARGET_MARKET>.
-- **Audience / safeguarding:** <WHO_THE_USERS_ARE_AND_ANY_PRIVACY_OR_SAFETY_CONSTRAINTS — e.g.
-  data minimization, guardian considerations, accessibility, no dark patterns>.
+- **Audience / constraints:** <WHO_THE_USERS_ARE_AND_ANY_PRIVACY_OR_SAFETY_OR_COMPLIANCE_CONSTRAINTS —
+  e.g. data minimization, role/authz boundaries, sensitive-data confidentiality, accessibility, no
+  dark patterns>.
 - **Localization:** <LANGUAGES_AND_RTL_REQUIREMENTS, OR "single-language, no RTL">.
 
 ## 5. Stack defaults
 
-Assume these unless the architect records a deviation with rationale. Replace with your stack:
+> Same intake rule as §4: interviewed for and recorded here on a new project; never inherited from a
+> prior project. The architect may record a per-task deviation with a one-line rationale.
 
-- **Web:** <WEB_STACK — e.g. Next.js>
-- **Mobile:** <MOBILE_STACK — e.g. Flutter, SwiftUI for native iOS>
-- **Backend:** <BACKEND_STACK — e.g. .NET + Supabase (Postgres, Auth, Storage)>
-- **Automation / workflows:** <AUTOMATION_STACK — e.g. n8n>
-- **AI features:** <AI_DEFAULTS — e.g. default to the latest Claude models>
+- **Web:** <WEB_STACK — e.g. Next.js, or "none">
+- **Mobile:** <MOBILE_STACK — e.g. Flutter, SwiftUI for native iOS, or "none">
+- **Backend:** <BACKEND_STACK — e.g. .NET + PostgreSQL, Node, Supabase>
+- **Automation / workflows:** <AUTOMATION_STACK — e.g. n8n, or "none">
+- **AI features:** <AI_DEFAULTS — e.g. default to the latest Claude models, or "none">
 
 ## 6. Coding standards
 

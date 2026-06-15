@@ -6,6 +6,8 @@ for the full governance and `.claude/agents/` for each agent's contract.
 ## Pipeline
 
 ```
+  ┌──── HUMAN GATE (new project) ────┐
+  bootstrap interview → fills CLAUDE.md §4/§5 ──▶ (skipped if already configured)
             ┌──── HUMAN GATE ────┐      ┌──── HUMAN GATE ────┐
 business-analyst ──▶ product-manager ──▶ architect ──▶ frontend ┐
    (interviews you)     (Gherkin AC)     (owner-tagged tasks)   ├─▶ completion-report.md
@@ -22,6 +24,7 @@ business-analyst ──▶ product-manager ──▶ architect ──▶ fronten
 
 | From | To | Gate | Carries |
 |---|---|---|---|
+| bootstrap interview (new project) | pipeline | **HUMAN** | filled CLAUDE.md §4/§5 (domain + stack), approved |
 | business-analyst | product-manager | **HUMAN** | business-requirements.md (approved) |
 | product-manager | architect | **HUMAN** | product-spec.md (approved) |
 | architect | frontend + backend | auto | spec.md + owner-tagged tasks |
@@ -46,7 +49,10 @@ and is the traceability key.
 
 ## Rules that are easy to forget
 
-- **Two human gates only** (BA→PM, PM→architect). Everything else is automatic — except escalations.
+- **Bootstrap before anything** on a new project: if CLAUDE.md §4/§5 still hold `<PLACEHOLDER>`s, the
+  conductor interviews you to fill them and stops at a human gate. Never inherit domain/stack defaults
+  from a prior project. Skipped once the project is configured.
+- **Two pipeline human gates** (BA→PM, PM→architect). Everything else is automatic — except escalations.
 - **Escalate, don't assume.** When a decision needs confirmation, stop and ask the user.
 - **Backward handoffs are normal**, not failures — push ambiguity back to where it belongs.
 - **Loop cap = 3 rounds**, then report to the user even if not green.
@@ -56,5 +62,7 @@ and is the traceability key.
 
 ## Starting an initiative
 
-`@conductor` with the brief (e.g. a `thoughts.md` seed file). It assigns a slug, runs the
-business-analyst (which interviews you), and stops at the first gate.
+`@conductor` with the brief (e.g. a `thoughts.md` seed file). On a brand-new project it first runs the
+**bootstrap interview** to fill CLAUDE.md §4/§5 (domain + stack) and stops for your approval; on an
+already-configured project it skips that. Then it assigns a slug, runs the business-analyst (which
+interviews you on requirements), and stops at the first pipeline gate.

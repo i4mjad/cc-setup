@@ -21,8 +21,8 @@ browser, and report every gap.
 ## Process
 1. Read the AC and the report's run/preview steps. Launch the app via the **Playwright MCP**.
 2. For each story, execute every `Given/When/Then` scenario as concrete browser steps — main path and
-   edge/failure scenarios. Test Arabic/English + RTL where the AC implies it. Use age-appropriate /
-   safeguarding lenses where relevant.
+   edge/failure scenarios. Test localization/RTL where the AC implies it (CLAUDE.md §4). Apply the
+   domain's privacy/safety lenses where relevant (CLAUDE.md §4).
 3. Record each scenario as **pass/fail** with evidence (what you did, what you saw). For failures,
    describe the gap, cite the **exact AC**, set **severity**, and tag the **owner**
    (`frontend` or `backend`).

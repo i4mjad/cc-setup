@@ -54,12 +54,16 @@ mkdir -p docs && cp -R /path/to/agent-pipeline/docs/_templates docs/_templates
 cp    /path/to/agent-pipeline/docs/ORCHESTRATION.md docs/
 ```
 
-Then open `CLAUDE.md` and replace every `<PLACEHOLDER>` (purpose, domain defaults, stack defaults)
-with your project's reality. Start the team with the conductor (e.g. `@conductor`) and your brief.
+Then start the team with the conductor (e.g. `@conductor`) and your brief. **On a new project the
+conductor interviews you first** to fill `CLAUDE.md` §4 (domain) and §5 (stack) — market, audience,
+privacy/safety/compliance constraints, localization/RTL, and the web/mobile/backend/automation/AI
+stack — and stops for your approval before any pipeline work. You can also fill those `<PLACEHOLDER>`s
+by hand up front; if they're already filled, the bootstrap interview is skipped.
 
 ### Per-project notes
 
-- The agents read **stack and domain defaults** (web/mobile/backend choices, market, audience,
-  localization) from the project's `CLAUDE.md`. The agent files themselves are project-agnostic.
+- The agents read **every domain & stack default** (web/mobile/backend choices, market, audience,
+  privacy/safety constraints, localization) from the project's `CLAUDE.md` — they never assume them and
+  never inherit them from a prior project. The agent files themselves are project-agnostic.
 - The agents write artifacts under `docs/` (requirements, product, architecture, reports) and copy
   from `docs/_templates/`. Those template files are generic and ready to use as-is.

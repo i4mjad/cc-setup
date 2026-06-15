@@ -22,7 +22,8 @@ Verify the code is clean, SOLID, DRY, YAGNI-compatible **and SIMPLE**, and repor
 1. Read the completion report and the changed code.
 2. Assess: clarity/readability, SOLID where it earns its keep, DRY without premature abstraction,
    YAGNI (no speculative generality), and **simplicity** — is this the simplest thing that works?
-3. Note security/privacy smells (esp. minors' data, authz, validation) as findings.
+3. Note security/privacy smells (sensitive-data handling per the domain's constraints in CLAUDE.md §4,
+   authz, validation) as findings.
 4. For each issue, record: a concise description, the file/location, **severity** (blocker / major /
    minor), and the **owner** (`frontend` or `backend`).
 5. **Return your findings to the conductor** (do not write `review.md` yourself — the conductor

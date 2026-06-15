@@ -13,8 +13,8 @@
 ## 2. Stakeholders
 | Stakeholder | Their need / what success looks like for them |
 |---|---|
-| <e.g. Student (minor)> | <need> |
-| <e.g. Teacher> | <need> |
+| <e.g. primary user role> | <need> |
+| <e.g. secondary role / admin> | <need> |
 
 ## 3. Stated wants → recovered needs
 | Stated want (from brief) | Underlying need | Who has it |
@@ -39,4 +39,5 @@
 - <non-blocking gap for the user to resolve at the approval gate>
 
 ## 8. Constraints
-<Regulatory, safeguarding (minors), language (AR/EN + RTL), commercial, timeline — as known.>
+<Regulatory/compliance, privacy & safety constraints, localization (language + RTL), commercial,
+timeline — per the domain defaults in CLAUDE.md §4, as known.>

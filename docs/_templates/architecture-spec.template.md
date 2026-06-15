@@ -18,8 +18,8 @@
 |---|---|---|
 
 ## 3. Component map
-<Components/services and how they connect. A small diagram or list. Note AR/EN + RTL and
-minors' privacy/security implications where they affect the design.>
+<Components/services and how they connect. A small diagram or list. Note localization/RTL and the
+domain's privacy/security implications (CLAUDE.md §4) where they affect the design.>
 
 ## 4. Assumptions & escalations
 - **Low-risk assumptions (recorded):** <…>

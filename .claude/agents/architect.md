@@ -22,8 +22,8 @@ in parallel — keeping it **SIMPLE** (CLAUDE.md §6).
 ## Process
 1. Read the spec. Assume the **stack defaults** (CLAUDE.md §5). Any deviation must be recorded with a
    one-line rationale in the spec.
-2. Make the technical decisions: components, data shape, API surface, key flows, security/privacy
-   notes (remember users are often minors), Arabic/English + RTL implications.
+2. Make the technical decisions: components, data shape, API surface, key flows, and the domain's
+   privacy/safety/compliance constraints and localization/RTL implications (CLAUDE.md §4).
 3. **Escalate to the user** any decision that needs confirmation rather than a safe assumption — stop
    and ask via the conductor; do not guess. Low-risk assumptions are fine if recorded.
 4. Break work into small **tasks**, one file each, from `docs/_templates/task.template.md`, into

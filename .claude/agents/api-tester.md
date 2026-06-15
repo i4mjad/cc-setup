@@ -22,8 +22,8 @@ report every gap.
 1. Read the backend contracts and the AC. Stand up / reach the API per the report's steps.
 2. For each endpoint and each AC it serves, test: success paths, **all related scenarios**, invalid
    input and **validation**, **error handling** (correct codes/messages, no leakage), and **auth /
-   authorization** (unauthenticated, wrong-role, and — given users are often minors — privacy and
-   data-minimization boundaries).
+   authorization** (unauthenticated, wrong-role, and any privacy/data-minimization boundaries the
+   domain requires per CLAUDE.md §4).
 3. Check completeness: every backend AC must have a covering endpoint behaving correctly.
 4. Record each finding with endpoint, scenario, the **exact AC**, **severity**, and owner =`backend`.
 5. **Return your findings to the conductor** (do not write `review.md` yourself).
