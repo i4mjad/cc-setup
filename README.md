@@ -11,22 +11,44 @@ Install it once and it's available in **every** project — no copy-paste, auto-
 
 ## Install
 
+**1. Install the plugin (once, globally):**
+
 ```bash
-claude plugin marketplace add i4mjad/cc-setup
-claude plugin install cc-setup@cc-setup
+claude plugin marketplace add i4mjad/cc-setup   # register this repo as a marketplace
+claude plugin install cc-setup@cc-setup         # install the plugin
 ```
 
-Then, in any project:
+Then **restart Claude Code** so the agents, `/cc-init`, and `/feature` load.
+
+To update later: `claude plugin update cc-setup@cc-setup`. To develop locally, point the marketplace at
+a checkout instead: `claude plugin marketplace add /path/to/cc-setup`.
+
+**2. Scaffold a project (once per project):**
 
 ```
-/init                 # scaffold: writes CLAUDE.md, interviews you for domain + project shape
-/feature <brief>      # run the pipeline on an idea
+/cc-init
 ```
 
-`/init` asks the **project shape** — full-stack web vs full-stack + mobile, which mobile (iOS / Flutter /
-both), and which backend (.NET / Supabase / Firebase / custom) — and records it in `CLAUDE.md §5`, which
-decides exactly which build agents `/feature` dispatches. Everything else lives in the plugin (referenced
-via `${CLAUDE_PLUGIN_ROOT}`) — only `CLAUDE.md` is written into your project.
+`/cc-init` writes a starter `CLAUDE.md` and interviews you for the **project shape** — full-stack web vs
+full-stack + mobile, which mobile (iOS / Flutter / both), and which backend (.NET / Supabase / Firebase /
+custom). It records that in `CLAUDE.md §5`, which decides exactly which build agents `/feature` dispatches.
+(Named `cc-init`, not `init`, to avoid clashing with Claude Code's built-in `/init`.)
+
+**3. Install the skills your stack needs (once per project):**
+
+```bash
+# /cc-init prints the exact command; e.g. a web + iOS app on Supabase:
+bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh web ios supabase roles
+```
+
+**4. Run the pipeline (any time):**
+
+```
+/feature <brief>
+```
+
+Only `CLAUDE.md` is written into your project — everything else lives in the plugin (referenced via
+`${CLAUDE_PLUGIN_ROOT}`).
 
 ## The 11 agents
 
@@ -111,8 +133,8 @@ prompt, so nothing breaks.
 .claude-plugin/{marketplace,plugin}.json   # marketplace + plugin manifests
 agents/*.md                                # the 11 specialist agents (auto-discovered)
 skills/feature/SKILL.md                    # the /feature pipeline orchestrator
-commands/init.md                           # the /init project scaffolder
-templates/CLAUDE.md                        # the starter governance /init writes
+commands/cc-init.md                           # the /cc-init project scaffolder
+templates/CLAUDE.md                        # the starter governance /cc-init writes
 skills.manifest.json                       # stack + role → skills map
 scripts/bootstrap.sh                       # installs the skills your project needs
 docs/ORCHESTRATION.md · docs/_templates/   # pipeline reference + artifact templates

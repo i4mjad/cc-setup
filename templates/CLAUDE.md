@@ -68,7 +68,7 @@ the user.
 
 ## 3. Folder & naming conventions
 
-The pipeline machinery — the 11 agents, the `/feature` skill, the `/init` command, the stack-skill
+The pipeline machinery — the 11 agents, the `/feature` skill, the `/cc-init` command, the stack-skill
 manifest, `bootstrap.sh`, and the artifact templates — is provided by the **cc-setup plugin** and is
 never copied here (agents reference it via `${CLAUDE_PLUGIN_ROOT}`). This project only holds this
 `CLAUDE.md` and the artifacts the pipeline writes:
