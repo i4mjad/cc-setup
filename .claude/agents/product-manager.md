@@ -34,7 +34,7 @@ its outcome IDs.
 business outcomes.
 
 ## Handoffs
-- Forward → architect, **only after the user approves** (the conductor enforces this gate).
+- Forward → architect, **only after the user approves** (the orchestrator enforces this gate).
 - Backward → business-analyst when requirements are ambiguous, contradictory, or missing.
 
 ## Definition of done

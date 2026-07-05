@@ -1,11 +1,11 @@
 # Review — <initiative title>
 
 - **Slug:** <slug>
-- **Written by:** conductor (consolidated from code-reviewer, qa-tester, api-tester)
+- **Written by:** orchestrator (consolidated from code-reviewer, qa-tester, api-tester)
 - **Round:** <1 | 2 | 3>
 - **Verdict:** GREEN (no open issues) | issues open (see Routed fixes)
 
-> Reviewers return findings to the conductor; the conductor writes this single file to avoid
+> Reviewers return findings to the orchestrator; the orchestrator writes this single file to avoid
 > parallel-write clobber.
 
 ## Code review  (from code-reviewer)
@@ -23,7 +23,7 @@
 |---|---|---|---|---|---|
 | A1 | <method path> / US-1 | <error/validation/authz case> | pass/fail | … | backend |
 
-## Routed fixes  (conductor)
+## Routed fixes  (orchestrator)
 | Fix | From finding | Routed to | Maps to AC | Status |
 |---|---|---|---|---|
 | <description> | C1 / Q1 / A1 | frontend/backend | US-n / Scenario | open/fixed |

@@ -14,7 +14,8 @@ repo is currently greenfield — no apps exist yet" or "Apps live under `apps/` 
 
 ## 2. The agent team & pipeline
 
-Nine agents run a requirements → build → verify pipeline, driven by the **conductor**:
+Eight specialist agents run a requirements → build → verify pipeline, orchestrated by the
+**`/feature`** skill (run by the main thread — there is no conductor agent):
 
 ```
             ┌──── human gate ────┐      ┌──── human gate ────┐
@@ -24,17 +25,17 @@ business-analyst ──▶ product-manager ──▶ architect ──▶ fronten
                                           ┌── code-reviewer ──┐         │
                                           ├── qa-tester ──────┤◀────────┘
                                           └── api-tester ─────┘
-                                                  │ (findings → conductor → review.md)
+                                                  │ (findings → /feature → review.md)
                                                   ▼
                                        routed fixes ──▶ frontend / backend
                                                   │
                                        auto-loop ≤ 3 rounds, then report to user
 ```
 
-- **conductor** orchestrates: assigns the initiative `<slug>`, invokes each agent in order, runs
-  frontend+backend in parallel and the three reviewers in parallel, writes the consolidated
-  `review.md`, routes fixes, loops, and stops at the human gates. It never does requirements,
-  design, or coding itself.
+- **`/feature`** orchestrates (the main thread, not a subagent): assigns the initiative `<slug>`,
+  invokes each agent in order, runs frontend+backend in parallel and the three reviewers in parallel,
+  writes the consolidated `review.md`, routes fixes, loops, and stops at the human gates. It never
+  does requirements, design, or coding itself. Start an initiative with `/feature <brief>`.
 
 ### Handoff rules
 
@@ -45,7 +46,7 @@ business-analyst ──▶ product-manager ──▶ architect ──▶ fronten
 | product-manager → architect | **HUMAN GATE** — stop for user approval |
 | architect → frontend + backend | automatic |
 | frontend/backend → reviewers | automatic |
-| reviewers → frontend/backend (routed fixes) | automatic, via conductor |
+| reviewers → frontend/backend (routed fixes) | automatic, via `/feature` |
 
 **Backward handoffs** are allowed and expected when work upstream is wrong/ambiguous:
 architect → product-manager, product-manager → business-analyst, reviewers → frontend/backend.
@@ -54,7 +55,7 @@ architect → product-manager, product-manager → business-analyst, reviewers �
 to fill a real gap. When a decision needs *confirmation rather than an assumption*, it stops and asks
 the user. Assumptions are only acceptable when explicitly low-risk and recorded in the artifact.
 
-**Loop policy:** after fixes, the conductor re-runs the relevant reviewers and loops
+**Loop policy:** after fixes, `/feature` re-runs the relevant reviewers and loops
 build → review → fix → re-review until all issues clear or **3 rounds** are reached, then reports to
 the user.
 
@@ -62,7 +63,10 @@ the user.
 
 ```
 CLAUDE.md                         # this file
-.claude/agents/*.md               # the 9 agents
+.claude/agents/*.md               # the 8 specialist agents
+.claude/skills/feature/SKILL.md   # the /feature pipeline orchestrator (entry point)
+skills.manifest.json              # stack → skills map (installed by bootstrap)
+scripts/bootstrap.sh              # installs the skills matching this project's stack
 docs/
   ORCHESTRATION.md                # pipeline + handoff reference
   _templates/*.template.md        # artifact templates the agents copy from
@@ -76,14 +80,14 @@ apps/        # client apps (web / mobile)
 services/    # backend services
 ```
 
-**`<slug>`** is the initiative key (e.g. `<example-slug>`). The conductor assigns it at intake
+**`<slug>`** is the initiative key (e.g. `<example-slug>`). `/feature` assigns it at intake
 from the brief and it is threaded through every artifact path. It is how the traceability spine is
 followed end to end. One slug = one initiative/epic.
 
 ## 4. Domain defaults
 
 > **Mandatory intake:** on a new project these MUST be **interviewed for and recorded here before any
-> pipeline work** — the conductor runs the bootstrap interview and stops at a human gate. **Never
+> pipeline work** — `/feature` runs the bootstrap interview and stops at a human gate. **Never
 > inherit these from a prior project**; no agent may assume them. While any `<PLACEHOLDER>` below
 > remains, the project is unconfigured.
 
@@ -106,6 +110,12 @@ These hold unless an artifact explicitly overrides them. Replace with your proje
 - **Automation / workflows:** <AUTOMATION_STACK — e.g. n8n, or "none">
 - **AI features:** <AI_DEFAULTS — e.g. default to the latest Claude models, or "none">
 
+**Stack skills.** `skills.manifest.json` maps each stack to the specialist skills that help build it
+(e.g. `.NET` backend → the `/dotnet-clean-arch` skill). Run `bash scripts/bootstrap.sh <stack…>` once
+per project to install the matching ones; the **backend** and **frontend** agents then invoke them
+when the stack above matches (see their agent files). Skills are declared, not vendored — they stay in
+sync with upstream and only the ones your stack needs get installed.
+
 ## 6. Coding standards
 
 Write code that is **clean, SOLID, DRY, and YAGNI — but SIMPLE above all.**
@@ -120,7 +130,7 @@ Write code that is **clean, SOLID, DRY, and YAGNI — but SIMPLE above all.**
 a clear message describing what and why. Don't batch unrelated changes into one commit, and don't wait
 until a whole task is finished: each self-contained increment that builds/passes is its own commit.
 This keeps history reviewable and every step easy to revert. The build agents (frontend, backend)
-commit as they go; the conductor never squashes these into a single end-of-task commit.
+commit as they go; `/feature` never squashes these into a single end-of-task commit.
 
 ## 7. Traceability spine (must be preserved end to end)
 

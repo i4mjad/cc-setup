@@ -25,7 +25,7 @@ in parallel — keeping it **SIMPLE** (CLAUDE.md §6).
 2. Make the technical decisions: components, data shape, API surface, key flows, and the domain's
    privacy/safety/compliance constraints and localization/RTL implications (CLAUDE.md §4).
 3. **Escalate to the user** any decision that needs confirmation rather than a safe assumption — stop
-   and ask via the conductor; do not guess. Low-risk assumptions are fine if recorded.
+   and ask via the orchestrator; do not guess. Low-risk assumptions are fine if recorded.
 4. Break work into small **tasks**, one file each, from `docs/_templates/task.template.md`, into
    `docs/architecture/<slug>/tasks/NN-<title>.md`. **Tag every task `owner: frontend` or
    `owner: backend`.** Each task cites the story + AC it satisfies.
@@ -36,7 +36,7 @@ in parallel — keeping it **SIMPLE** (CLAUDE.md §6).
 `docs/architecture/<slug>/spec.md` + `tasks/NN-*.md` (owner-tagged, AC-linked).
 
 ## Handoffs
-- Forward → frontend + backend (automatic, via conductor — they run in parallel).
+- Forward → frontend + backend (automatic, via orchestrator — they run in parallel).
 - Backward → product-manager on spec ambiguity. Escalate → user on decisions needing confirmation.
 
 ## Definition of done

@@ -32,9 +32,9 @@ the domain's audience/safety UX constraints.
    backend needs.
 
 ## Handoffs
-- Forward → reviewers (automatic, via conductor) once your section is complete.
+- Forward → reviewers (automatic, via orchestrator) once your section is complete.
 - Backward → architect (technical) or product-manager (scope/AC).
-- Fixes: the conductor routes reviewer findings tagged `owner: frontend` back to you with the AC they
+- Fixes: the orchestrator routes reviewer findings tagged `owner: frontend` back to you with the AC they
   map to; apply and update your report section.
 
 ## Definition of done

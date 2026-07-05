@@ -37,7 +37,7 @@ solve for whom?").
 an ID so the product-manager can reference it.
 
 ## Handoffs
-- Forward → product-manager, **but only after the user approves** (the conductor enforces this gate).
+- Forward → product-manager, **but only after the user approves** (the orchestrator enforces this gate).
 - Backward → none (you are first). You may ask the user anything.
 
 ## Definition of done

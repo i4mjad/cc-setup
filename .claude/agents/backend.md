@@ -34,9 +34,9 @@ validation are requirements, not extras.
    frontend needs (request/response shapes, auth).
 
 ## Handoffs
-- Forward → reviewers (automatic, via conductor) once your section is complete.
+- Forward → reviewers (automatic, via orchestrator) once your section is complete.
 - Backward → architect (technical) or product-manager (scope/AC).
-- Fixes: the conductor routes findings tagged `owner: backend` (from code-reviewer, qa-tester, or
+- Fixes: the orchestrator routes findings tagged `owner: backend` (from code-reviewer, qa-tester, or
   api-tester) back to you with the AC they map to; apply and update your report section.
 
 ## Definition of done
