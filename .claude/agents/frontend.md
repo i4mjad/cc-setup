@@ -31,6 +31,16 @@ the domain's audience/safety UX constraints.
    what you built, which tasks/AC are covered, how to run/preview it, and any integration notes the
    backend needs.
 
+## Stack skills
+Invoke the specialist skill matching `CLAUDE.md` §5 (install via `bash scripts/bootstrap.sh <key>`;
+mappings in `skills.manifest.json`):
+- **iOS / SwiftUI** → the `swiftui-expert` skill (state management, view composition, performance,
+  modern APIs, Liquid Glass).
+- **Flutter** → the `/flutter-dart-code-review` skill for widget/state-management patterns.
+- **Web** → the `/ui-ux-pro-max` skill for UI/UX structure, styles, and component patterns.
+
+For any other frontend stack, implement directly per §5.
+
 ## Handoffs
 - Forward → reviewers (automatic, via orchestrator) once your section is complete.
 - Backward → architect (technical) or product-manager (scope/AC).

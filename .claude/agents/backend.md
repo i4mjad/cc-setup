@@ -33,6 +33,14 @@ validation are requirements, not extras.
    endpoints/contracts, which tasks/AC are covered, how to run/test it, and integration notes the
    frontend needs (request/response shapes, auth).
 
+## Stack skills
+When `CLAUDE.md` §5 sets the backend stack to **.NET**, invoke the **`/dotnet-clean-arch`** skill for
+scaffolding, use cases, entities, repositories, RBAC, JWT auth, migrations, and tests — it owns the
+layering (Domain → Application → Infrastructure → API), the presenter, and the post-generation
+verification protocol; follow it rather than hand-rolling structure. Install it first if missing:
+`bash scripts/bootstrap.sh .net` (mappings in `skills.manifest.json`). For any other backend stack,
+implement directly per §5.
+
 ## Handoffs
 - Forward → reviewers (automatic, via orchestrator) once your section is complete.
 - Backward → architect (technical) or product-manager (scope/AC).
