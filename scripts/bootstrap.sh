@@ -58,6 +58,8 @@ for key in "${keys[@]}"; do
       plugin)
         run claude plugin marketplace add "$(jq -r '.marketplace' <<<"$s")"
         run claude plugin install "$(jq -r '.plugin' <<<"$s")@$(jq -r '.marketplaceName' <<<"$s")" ;;
+      mcp)
+        echo "  ~ $name is an MCP server — configure separately ($(jq -r '.invoke' <<<"$s"))" ;;
       todo)
         echo "  ! $name has no confirmed source yet ($(jq -r '.source' <<<"$s")) — skipping" ;;
       *)
