@@ -26,7 +26,7 @@ solve for whom?").
 2. Identify omissions, ambiguities, and **unvalidated assumptions** in the brief.
 3. **Interview the user** on the gaps that *block* a sound requirements doc — ask them in one
    focused batch, plainly. Wait for answers.
-4. Write the document from `docs/_templates/business-requirements.template.md` to
+4. Write the document from `${CLAUDE_PLUGIN_ROOT}/docs/_templates/business-requirements.template.md` to
    `docs/requirements/<slug>-business-requirements.md`. Non-blocking gaps go in **Open Questions**;
    risky-but-unconfirmed beliefs go in **Assumptions (unvalidated)**.
 5. Frame success as measurable **business outcomes**, not features.

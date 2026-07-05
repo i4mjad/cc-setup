@@ -29,7 +29,7 @@ validation are requirements, not extras.
    commit (CLAUDE.md §6), not one big commit at the end.
 3. Self-check each task against its AC and against obvious abuse/error cases before reporting.
 4. Fill **only the Backend section** of `docs/reports/<slug>/completion-report.md` (create it from
-   `docs/_templates/completion-report.template.md` if absent; otherwise edit only your section):
+   `${CLAUDE_PLUGIN_ROOT}/docs/_templates/completion-report.template.md` if absent; otherwise edit only your section):
    endpoints/contracts, which tasks/AC are covered, how to run/test it, and integration notes the
    frontend needs (request/response shapes, auth).
 
@@ -38,7 +38,7 @@ When `CLAUDE.md` §5 sets the backend stack to **.NET**, invoke the **`/dotnet-c
 scaffolding, use cases, entities, repositories, RBAC, JWT auth, migrations, and tests — it owns the
 layering (Domain → Application → Infrastructure → API), the presenter, and the post-generation
 verification protocol; follow it rather than hand-rolling structure. Install it first if missing:
-`bash scripts/bootstrap.sh .net` (mappings in `skills.manifest.json`). For any other backend stack,
+`bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh .net` (mappings in `${CLAUDE_PLUGIN_ROOT}/skills.manifest.json`). For any other backend stack,
 implement directly per §5.
 
 ## Handoffs

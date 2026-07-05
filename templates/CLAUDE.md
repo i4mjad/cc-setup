@@ -1,7 +1,7 @@
 # <PROJECT_NAME> — Project Memory
 
-This file governs the whole workspace. Every agent in `.claude/agents/` inherits it automatically.
-Read it before acting.
+This file governs the whole workspace. Every agent from the **cc-setup plugin** reads it
+automatically. Read it before acting.
 
 > **Reuse note:** this is the genericized governance for the agent pipeline. Replace every
 > `<PLACEHOLDER>` below with your project's specifics before starting an initiative. The agent
@@ -61,15 +61,14 @@ the user.
 
 ## 3. Folder & naming conventions
 
+The pipeline machinery — the 8 agents, the `/feature` skill, the `/init` command, the stack-skill
+manifest, `bootstrap.sh`, and the artifact templates — is provided by the **cc-setup plugin** and is
+never copied here (agents reference it via `${CLAUDE_PLUGIN_ROOT}`). This project only holds this
+`CLAUDE.md` and the artifacts the pipeline writes:
+
 ```
-CLAUDE.md                         # this file
-.claude/agents/*.md               # the 8 specialist agents
-.claude/skills/feature/SKILL.md   # the /feature pipeline orchestrator (entry point)
-skills.manifest.json              # stack → skills map (installed by bootstrap)
-scripts/bootstrap.sh              # installs the skills matching this project's stack
+CLAUDE.md                         # this file (the only per-project config)
 docs/
-  ORCHESTRATION.md                # pipeline + handoff reference
-  _templates/*.template.md        # artifact templates the agents copy from
   requirements/<slug>-business-requirements.md
   product/<slug>-product-spec.md
   architecture/<slug>/spec.md
@@ -110,11 +109,12 @@ These hold unless an artifact explicitly overrides them. Replace with your proje
 - **Automation / workflows:** <AUTOMATION_STACK — e.g. n8n, or "none">
 - **AI features:** <AI_DEFAULTS — e.g. default to the latest Claude models, or "none">
 
-**Stack skills.** `skills.manifest.json` maps each stack to the specialist skills that help build it
-(e.g. `.NET` backend → the `/dotnet-clean-arch` skill). Run `bash scripts/bootstrap.sh <stack…>` once
-per project to install the matching ones; the **backend** and **frontend** agents then invoke them
-when the stack above matches (see their agent files). Skills are declared, not vendored — they stay in
-sync with upstream and only the ones your stack needs get installed.
+**Stack skills.** The cc-setup plugin's `skills.manifest.json` maps each stack to the specialist skills
+that help build it (e.g. `.NET` backend → the `/dotnet-clean-arch` skill). Run
+`bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh <stack…>` once per project to install the matching
+ones; the **backend** and **frontend** agents then invoke them when the stack above matches (see their
+agent files). Skills are declared, not vendored — they stay in sync with upstream and only the ones
+your stack needs get installed.
 
 ## 6. Coding standards
 

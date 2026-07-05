@@ -1,11 +1,31 @@
 # cc-setup
 
-A reusable **Claude Code setup**: a **requirements → build → verify** agent team plus a curated,
-stack-aware skill set. Eight specialist agents run a single pipeline, orchestrated by the **`/feature`**
-skill, that takes a raw client brief all the way to reviewed, verified code — stopping at human
-approval gates along the way.
+A reusable **Claude Code plugin**: a **requirements → build → verify** agent team plus a stack-aware
+skill set. Eight specialist agents run a single pipeline, orchestrated by the **`/feature`** skill,
+that takes a raw brief all the way to reviewed, verified code — stopping at human approval gates along
+the way.
 
-Drop it into any project and start with `/feature <brief>`.
+Install it once and it's available in **every** project — no copy-paste, auto-updated via
+`claude plugin update`.
+
+## Install
+
+```bash
+claude plugin marketplace add i4mjad/cc-setup
+claude plugin install cc-setup@cc-setup
+```
+
+Then, in any project:
+
+```
+/init                 # scaffold: writes a starter CLAUDE.md, interviews you for domain + stack
+/feature <brief>      # run the pipeline on an idea
+```
+
+`/init` is the only setup step — it drops a `CLAUDE.md` into the repo and fills its domain/stack
+defaults by interview. Everything else (agents, the `/feature` skill, the skill manifest, bootstrap,
+artifact templates) lives in the plugin and is referenced via `${CLAUDE_PLUGIN_ROOT}` — nothing is
+copied into your project except that one `CLAUDE.md`.
 
 ## The 8 agents
 
@@ -38,19 +58,6 @@ business-analyst ──[HUMAN GATE]──▶ product-manager ──[HUMAN GATE]�
 - **Backward handoffs** are expected when upstream work is wrong/ambiguous (architect → PM → BA).
 - **Escalate-on-ambiguity**: downstream agents stop and ask rather than fill a real gap with a guess.
 
-## What's in this repo
-
-```
-CLAUDE.md                       # genericized governance — fill the <PLACEHOLDER>s per project
-.claude/agents/*.md             # the 8 specialist agents (project-agnostic)
-.claude/skills/feature/SKILL.md # the /feature pipeline orchestrator (entry point)
-skills.manifest.json            # stack → skills map
-scripts/bootstrap.sh            # installs the skills matching your stack
-docs/
-  ORCHESTRATION.md              # pipeline + handoff reference
-  _templates/*.md               # the 6 artifact templates the agents copy from
-```
-
 ## Stack skills
 
 `skills.manifest.json` maps each stack (CLAUDE.md §5) to the specialist skills that help build it —
@@ -64,41 +71,39 @@ installed:
 | `web` | `/ui-ux-pro-max` | `nextlevelbuilder/ui-ux-pro-max-skill` (plugin) |
 | `flutter` | `/flutter-dart-code-review` | _TODO — add a public source_ |
 
-Install the ones a project needs:
+Install the ones a project needs (the paths resolve inside the plugin):
 
 ```bash
-bash scripts/bootstrap.sh .net            # or: ios-swiftui web flutter …
-bash scripts/bootstrap.sh --dry-run .net  # preview the install commands
-bash scripts/bootstrap.sh                 # list available stack keys
+bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh .net            # or: ios-swiftui web flutter …
+bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh --dry-run .net  # preview the install commands
+bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh                 # list available stack keys
 ```
 
 The `frontend`/`backend` agents then invoke the matching skill automatically when CLAUDE.md §5 sets
 that stack.
 
-## Reuse in a project
+## What's in the plugin
 
-```bash
-# from your project root
-cp -R /path/to/cc-setup/.claude/agents  .claude/agents
-cp -R /path/to/cc-setup/.claude/skills  .claude/skills
-cp    /path/to/cc-setup/skills.manifest.json .
-cp -R /path/to/cc-setup/scripts .
-cp    /path/to/cc-setup/CLAUDE.md .            # then fill in the <PLACEHOLDER>s
-mkdir -p docs && cp -R /path/to/cc-setup/docs/_templates docs/_templates
-cp    /path/to/cc-setup/docs/ORCHESTRATION.md docs/
+```
+.claude-plugin/
+  marketplace.json          # marketplace entry (this repo is its own marketplace)
+  plugin.json               # plugin manifest
+agents/*.md                 # the 8 specialist agents (auto-discovered)
+skills/feature/SKILL.md     # the /feature pipeline orchestrator (auto-discovered)
+commands/init.md            # the /init project scaffolder (auto-discovered)
+templates/CLAUDE.md         # the starter governance /init writes into a project
+skills.manifest.json        # stack → skills map
+scripts/bootstrap.sh        # installs the skills matching your stack
+docs/
+  ORCHESTRATION.md          # pipeline + handoff reference
+  _templates/*.md           # the 6 artifact templates the agents write from
 ```
 
-Then start the team with **`/feature <brief>`** (the brief inline or a `thoughts.md` seed). **On a new
-project `/feature` interviews you first** to fill `CLAUDE.md` §4 (domain) and §5 (stack) — market,
-audience, privacy/safety/compliance constraints, localization/RTL, and the web/mobile/backend/
-automation/AI stack — and stops for your approval before any pipeline work. You can also fill those
-`<PLACEHOLDER>`s by hand up front; if they're already filled, the bootstrap interview is skipped. Once
-the stack is set, run `bash scripts/bootstrap.sh <stack-key…>` to install the matching skills.
+## Local development / dogfooding
 
-### Per-project notes
+To iterate on this plugin from a local checkout, add it as a marketplace by path:
 
-- The agents read **every domain & stack default** (web/mobile/backend choices, market, audience,
-  privacy/safety constraints, localization) from the project's `CLAUDE.md` — they never assume them and
-  never inherit them from a prior project. The agent files themselves are project-agnostic.
-- The agents write artifacts under `docs/` (requirements, product, architecture, reports) and copy
-  from `docs/_templates/`. Those template files are generic and ready to use as-is.
+```bash
+claude plugin marketplace add /path/to/cc-setup
+claude plugin install cc-setup@cc-setup
+```

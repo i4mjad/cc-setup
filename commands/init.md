@@ -1,0 +1,44 @@
+---
+description: Scaffold the cc-setup pipeline into this project — writes a starter CLAUDE.md, then interviews you to fill its domain/stack defaults. Run once per new project.
+argument-hint: (no arguments)
+allowed-tools: Bash(test:*), Read, Write, AskUserQuestion
+---
+
+<!--
+cc-setup init — materializes the ONE genuinely per-project file (CLAUDE.md). Everything else
+(the 8 agents, the /feature skill, the stack-skill manifest, bootstrap.sh, and the artifact
+templates) lives in the plugin and is referenced by the agents via ${CLAUDE_PLUGIN_ROOT} — nothing
+else is copied into the project.
+-->
+
+Does this project already have a CLAUDE.md? !`test -f CLAUDE.md && echo EXISTS || echo MISSING`
+
+Here is the starter governance template the project needs:
+
+@${CLAUDE_PLUGIN_ROOT}/templates/CLAUDE.md
+
+**Do this:**
+
+1. **If CLAUDE.md is MISSING:** write the template above verbatim to `./CLAUDE.md`. It is the
+   governance file every cc-setup agent reads.
+
+2. **If CLAUDE.md already EXISTS:** do NOT overwrite it. Report that it's already present. Only
+   continue to the interview if it still contains `<PLACEHOLDER>` markers.
+
+3. **Interview to fill the defaults.** Using `AskUserQuestion`, interview the user in one focused batch
+   and write the answers into the new `./CLAUDE.md` §1 (purpose), §4 (domain defaults) and §5 (stack
+   defaults):
+   - Product purpose / one-line description, and whether the repo is greenfield or existing.
+   - Region / market; audience and any privacy / safety / compliance constraints.
+   - Localization / RTL requirements (or single-language).
+   - Stack: web / mobile / backend / automation / AI (or "none" for each).
+   Replace every matching `<PLACEHOLDER>` with the answers. Leave the pipeline sections (§2, §3, §6,
+   §7, §8) as-is.
+
+4. **Point to the stack skills.** Once §5 is filled, tell the user which stack keys apply and how to
+   install the matching specialist skills:
+   `bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh <stack-key…>`  (e.g. `.net`, `ios-swiftui`, `web`).
+   List the available keys with `bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh`.
+
+5. **Stop.** `/init` only scaffolds — it does not run the pipeline. Tell the user to start work with
+   `/feature <brief>`.

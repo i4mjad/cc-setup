@@ -2,7 +2,7 @@
 
 How the agent team runs. The **`/feature`** skill drives it (run by the main thread — there is no
 conductor agent); you are the approval gate. See `CLAUDE.md` for the full governance and
-`.claude/agents/` for each agent's contract.
+the plugin's `agents/` for each agent's contract.
 
 ## Pipeline
 

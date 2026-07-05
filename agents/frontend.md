@@ -27,13 +27,13 @@ the domain's audience/safety UX constraints.
    big commit at the end.
 3. Self-check each task against its AC before reporting.
 4. Fill **only the Frontend section** of `docs/reports/<slug>/completion-report.md` (create it from
-   `docs/_templates/completion-report.template.md` if absent; otherwise edit only your section):
+   `${CLAUDE_PLUGIN_ROOT}/docs/_templates/completion-report.template.md` if absent; otherwise edit only your section):
    what you built, which tasks/AC are covered, how to run/preview it, and any integration notes the
    backend needs.
 
 ## Stack skills
-Invoke the specialist skill matching `CLAUDE.md` §5 (install via `bash scripts/bootstrap.sh <key>`;
-mappings in `skills.manifest.json`):
+Invoke the specialist skill matching `CLAUDE.md` §5 (install via `bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh <key>`;
+mappings in `${CLAUDE_PLUGIN_ROOT}/skills.manifest.json`):
 - **iOS / SwiftUI** → the `swiftui-expert` skill (state management, view composition, performance,
   modern APIs, Liquid Glass).
 - **Flutter** → the `/flutter-dart-code-review` skill for widget/state-management patterns.

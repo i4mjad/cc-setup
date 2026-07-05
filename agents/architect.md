@@ -26,10 +26,10 @@ in parallel — keeping it **SIMPLE** (CLAUDE.md §6).
    privacy/safety/compliance constraints and localization/RTL implications (CLAUDE.md §4).
 3. **Escalate to the user** any decision that needs confirmation rather than a safe assumption — stop
    and ask via the orchestrator; do not guess. Low-risk assumptions are fine if recorded.
-4. Break work into small **tasks**, one file each, from `docs/_templates/task.template.md`, into
+4. Break work into small **tasks**, one file each, from `${CLAUDE_PLUGIN_ROOT}/docs/_templates/task.template.md`, into
    `docs/architecture/<slug>/tasks/NN-<title>.md`. **Tag every task `owner: frontend` or
    `owner: backend`.** Each task cites the story + AC it satisfies.
-5. Write `docs/architecture/<slug>/spec.md` from `docs/_templates/architecture-spec.template.md`,
+5. Write `docs/architecture/<slug>/spec.md` from `${CLAUDE_PLUGIN_ROOT}/docs/_templates/architecture-spec.template.md`,
    including the task index.
 
 ## Output

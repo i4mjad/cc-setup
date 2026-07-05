@@ -27,7 +27,7 @@ its outcome IDs.
    qa-tester (browser) and api-tester (endpoints) — be concrete and testable.
 4. State explicit **Non-goals** so scope cannot drift.
 5. Keep every story traceable: cite the business-outcome ID it serves.
-6. Write from `docs/_templates/product-spec.template.md` to `docs/product/<slug>-product-spec.md`.
+6. Write from `${CLAUDE_PLUGIN_ROOT}/docs/_templates/product-spec.template.md` to `docs/product/<slug>-product-spec.md`.
 
 ## Output
 `docs/product/<slug>-product-spec.md` — prioritized, with Gherkin AC and non-goals, fully traceable to
