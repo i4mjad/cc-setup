@@ -1,0 +1,49 @@
+{
+  "_comment": "Maps a project's stack (CLAUDE.md §5) to the specialist skills that help build it. Run `bash scripts/bootstrap.sh <stack-key…>` to install the ones this project needs. Leaf keys (.net, ios-swiftui, flutter, web) are what you pass to bootstrap. kind=skills-cli → `npx skills add <ref>`; kind=plugin → `claude plugin marketplace add <marketplace>` then `claude plugin install <plugin>@<marketplaceName>`; kind=todo → no confirmed public source yet, fill it in before it can be installed.",
+  "backend": {
+    ".net": [
+      {
+        "name": "dotnet-clean-arch",
+        "kind": "skills-cli",
+        "ref": "i4mjad/dotnet-clean-arch-skill",
+        "invoke": "/dotnet-clean-arch"
+      }
+    ]
+  },
+  "frontend": {
+    "ios-swiftui": [
+      {
+        "name": "swiftui-expert",
+        "kind": "plugin",
+        "marketplace": "AvdLee/SwiftUI-Agent-Skill",
+        "marketplaceName": "swiftui-expert-skill",
+        "plugin": "swiftui-expert",
+        "invoke": "swiftui-expert"
+      },
+      {
+        "name": "swiftui-pro",
+        "kind": "todo",
+        "invoke": "/swiftui-pro",
+        "source": "TODO — personal skill, no confirmed public upstream"
+      }
+    ],
+    "flutter": [
+      {
+        "name": "flutter-dart-code-review",
+        "kind": "todo",
+        "invoke": "/flutter-dart-code-review",
+        "source": "TODO — personal skill, no confirmed public upstream"
+      }
+    ],
+    "web": [
+      {
+        "name": "ui-ux-pro-max",
+        "kind": "plugin",
+        "marketplace": "nextlevelbuilder/ui-ux-pro-max-skill",
+        "marketplaceName": "ui-ux-pro-max-skill",
+        "plugin": "ui-ux-pro-max",
+        "invoke": "/ui-ux-pro-max"
+      }
+    ]
+  }
+}
