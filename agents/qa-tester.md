@@ -28,6 +28,10 @@ browser, and report every gap.
    (`frontend` or `backend`).
 4. **Return your results to the orchestrator** (do not write `review.md` yourself).
 
+## Role skill
+Browser testing runs on the **Playwright MCP**, provided by the `playwright` plugin. Install if
+missing: `bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh qa-tester`.
+
 ## Handoffs
 - Return → orchestrator (routes fixes; consolidates `review.md`).
 - A failure that traces to wrong/missing AC (not a build defect) → flag for the orchestrator to route

@@ -36,6 +36,11 @@ solve for whom?").
 `docs/requirements/<slug>-business-requirements.md` — solution-agnostic, traceable. Each outcome gets
 an ID so the product-manager can reference it.
 
+## Role skill
+Use the **`/grill-me`** skill to run the requirements interview — one question at a time, walking each
+branch of the decision tree — to surface blocking gaps before you write. Install if missing:
+`bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh business-analyst`.
+
 ## Handoffs
 - Forward → product-manager, **but only after the user approves** (the orchestrator enforces this gate).
 - Backward → none (you are first). You may ask the user anything.

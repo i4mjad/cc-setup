@@ -33,6 +33,10 @@ its outcome IDs.
 `docs/product/<slug>-product-spec.md` — prioritized, with Gherkin AC and non-goals, fully traceable to
 business outcomes.
 
+## Role skill
+Use **`/to-prd`** to shape the product spec and **`/to-issues`** to break it into independently-grabbable
+stories. Install if missing: `bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh product-manager`.
+
 ## Handoffs
 - Forward → architect, **only after the user approves** (the orchestrator enforces this gate).
 - Backward → business-analyst when requirements are ambiguous, contradictory, or missing.

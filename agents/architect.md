@@ -35,6 +35,11 @@ in parallel — keeping it **SIMPLE** (CLAUDE.md §6).
 ## Output
 `docs/architecture/<slug>/spec.md` + `tasks/NN-*.md` (owner-tagged, AC-linked).
 
+## Role skill
+Use the **`/architecture-designer`** skill for the technical decisions — architecture diagrams, ADRs,
+technology trade-offs, component interactions, and scalability planning. Install if missing:
+`bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh architect`.
+
 ## Handoffs
 - Forward → frontend + backend (automatic, via orchestrator — they run in parallel).
 - Backward → product-manager on spec ambiguity. Escalate → user on decisions needing confirmation.

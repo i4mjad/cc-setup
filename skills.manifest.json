@@ -1,5 +1,5 @@
 {
-  "_comment": "Maps a project's stack (CLAUDE.md §5) to the specialist skills that help build it. Run `bash scripts/bootstrap.sh <stack-key…>` to install the ones this project needs. Leaf keys (.net, ios-swiftui, flutter, web) are what you pass to bootstrap. kind=skills-cli → `npx skills add <ref>`; kind=plugin → `claude plugin marketplace add <marketplace>` then `claude plugin install <plugin>@<marketplaceName>`; kind=todo → no confirmed public source yet, fill it in before it can be installed.",
+  "_comment": "Two kinds of mapping. `backend`/`frontend` map a project's STACK (CLAUDE.md §5) to build skills — pass leaf keys (.net, ios-swiftui, flutter, web) to bootstrap, and the build agents invoke them only when the stack matches. `roles` maps each PIPELINE AGENT to always-on skills it uses regardless of stack — pass `roles` to install them all, or an agent name (e.g. code-reviewer) for one. Run `bash scripts/bootstrap.sh <key…>`. kind=skills-cli → `npx skills add <ref>`; kind=plugin → `claude plugin marketplace add <marketplace>` then `claude plugin install <plugin>@<marketplaceName>`; kind=todo → no confirmed public source yet, fill it in before it can be installed.",
   "backend": {
     ".net": [
       {
@@ -43,6 +43,74 @@
         "marketplaceName": "ui-ux-pro-max-skill",
         "plugin": "ui-ux-pro-max",
         "invoke": "/ui-ux-pro-max"
+      }
+    ]
+  },
+  "roles": {
+    "business-analyst": [
+      {
+        "name": "grill-me",
+        "kind": "skills-cli",
+        "ref": "mattpocock/skills@grill-me",
+        "invoke": "/grill-me"
+      }
+    ],
+    "product-manager": [
+      {
+        "name": "to-prd",
+        "kind": "skills-cli",
+        "ref": "mattpocock/skills@to-prd",
+        "invoke": "/to-prd"
+      },
+      {
+        "name": "to-issues",
+        "kind": "skills-cli",
+        "ref": "mattpocock/skills@to-issues",
+        "invoke": "/to-issues"
+      }
+    ],
+    "architect": [
+      {
+        "name": "architecture-designer",
+        "kind": "skills-cli",
+        "ref": "jeffallan/claude-skills@architecture-designer",
+        "invoke": "/architecture-designer"
+      }
+    ],
+    "code-reviewer": [
+      {
+        "name": "ponytail",
+        "kind": "plugin",
+        "marketplace": "DietrichGebert/ponytail",
+        "marketplaceName": "ponytail",
+        "plugin": "ponytail",
+        "invoke": "/ponytail-review, /ponytail-audit"
+      },
+      {
+        "name": "code-review-graph",
+        "kind": "plugin",
+        "marketplace": "tirth8205/code-review-graph",
+        "marketplaceName": "code-review-graph",
+        "plugin": "code-review-graph",
+        "invoke": "/code-review-graph:review-delta"
+      }
+    ],
+    "qa-tester": [
+      {
+        "name": "playwright",
+        "kind": "plugin",
+        "marketplace": "anthropics/claude-plugins-official",
+        "marketplaceName": "claude-plugins-official",
+        "plugin": "playwright",
+        "invoke": "Playwright MCP (browser testing)"
+      }
+    ],
+    "api-tester": [
+      {
+        "name": "api-testing",
+        "kind": "skills-cli",
+        "ref": "secondsky/claude-skills@api-testing",
+        "invoke": "/api-testing"
       }
     ]
   }

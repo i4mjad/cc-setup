@@ -28,6 +28,11 @@ report every gap.
 4. Record each finding with endpoint, scenario, the **exact AC**, **severity**, and owner =`backend`.
 5. **Return your findings to the orchestrator** (do not write `review.md` yourself).
 
+## Role skill
+Use the **`/api-testing`** skill to exercise endpoints — request/response validation, auth, and error
+handling (Supertest / httpx-pytest patterns). Install if missing:
+`bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh api-tester`.
+
 ## Handoffs
 - Return → orchestrator (routes fixes to backend; consolidates `review.md`).
 - Missing/contradictory AC → flag for the orchestrator to route **backward** to the product-manager.

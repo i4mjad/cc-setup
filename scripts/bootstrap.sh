@@ -24,11 +24,24 @@ done
 run() { if [ "$dry" = 1 ]; then echo "  + $*"; else echo "  + $*"; "$@"; fi; }
 
 if [ "${#keys[@]}" -eq 0 ]; then
-  echo "Available stack keys:"
-  jq -r 'to_entries[] | select(.value|type=="object") | .value | keys[] | "  " + .' "$manifest"
-  echo; echo "Usage: bash scripts/bootstrap.sh [--dry-run] [-g] <stack-key…>"
+  echo "Stack keys (install per project stack — CLAUDE.md §5):"
+  jq -r '((.backend // {}) + (.frontend // {})) | keys[] | "  " + .' "$manifest"
+  echo "Role keys (per pipeline agent — or pass 'roles' for all):"
+  jq -r '.roles | keys[] | "  " + .' "$manifest"
+  echo; echo "Usage: bash scripts/bootstrap.sh [--dry-run] [-g] <key…|roles>"
   exit 0
 fi
+
+# expand the `roles` meta-key to every agent-role key
+expanded=()
+for k in "${keys[@]}"; do
+  if [ "$k" = "roles" ]; then
+    while IFS= read -r rk; do expanded+=("$rk"); done < <(jq -r '.roles | keys[]' "$manifest")
+  else
+    expanded+=("$k")
+  fi
+done
+keys=("${expanded[@]}")
 
 for key in "${keys[@]}"; do
   skills="$(jq -c --arg k "$key" \
@@ -52,4 +65,4 @@ for key in "${keys[@]}"; do
     esac
   done
 done
-echo "Done. Skills are invoked by the backend/frontend agents when CLAUDE.md §5 matches."
+echo "Done. Stack skills are invoked by the build agents when CLAUDE.md §5 matches; role skills by their pipeline agent."

@@ -29,6 +29,12 @@ Verify the code is clean, SOLID, DRY, YAGNI-compatible **and SIMPLE**, and repor
 5. **Return your findings to the orchestrator** (do not write `review.md` yourself — the orchestrator
    consolidates all three reviewers into the single file).
 
+## Role skill
+Run the review through **`/ponytail-review`** and **`/ponytail-audit`** — they enforce exactly this
+agent's SIMPLE/YAGNI mandate (flagging complexity added just to satisfy a principle). Use
+**`/code-review-graph:review-delta`** for impact-scoped review of only the changed surface. Install if
+missing: `bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh code-reviewer`.
+
 ## Handoffs
 - Return → orchestrator (which routes fixes to frontend/backend and consolidates `review.md`).
 - You do not hand directly to FE/BE; routing is the orchestrator's job.

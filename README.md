@@ -82,6 +82,30 @@ bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh                 # list available
 The `frontend`/`backend` agents then invoke the matching skill automatically when CLAUDE.md §5 sets
 that stack.
 
+## Role skills
+
+Unlike stack skills (which switch on §5), **role skills are always-on** for their pipeline agent. The
+manifest's `roles` section maps each agent to the skill it uses:
+
+| Agent | Role skill | Source |
+|---|---|---|
+| business-analyst | `/grill-me` | `mattpocock/skills@grill-me` (454K installs) |
+| product-manager | `/to-prd`, `/to-issues` | `mattpocock/skills` (330K+) |
+| architect | `/architecture-designer` | `jeffallan/claude-skills@architecture-designer` |
+| code-reviewer | `/ponytail-review`, `/ponytail-audit`, `/code-review-graph:review-delta` | `DietrichGebert/ponytail`, `tirth8205/code-review-graph` (plugins) |
+| qa-tester | Playwright MCP | `playwright` plugin |
+| api-tester | `/api-testing` | `secondsky/claude-skills@api-testing` |
+
+Install all role skills at once, or just one agent's:
+
+```bash
+bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh roles           # all six
+bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh code-reviewer   # just one
+```
+
+Each agent invokes its role skill **if present** — if you skip the install, the agent falls back to
+its own prompt, so nothing breaks.
+
 ## What's in the plugin
 
 ```
