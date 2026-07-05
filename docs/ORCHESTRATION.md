@@ -9,17 +9,21 @@ the plugin's `agents/` for each agent's contract.
 ```
   ┌──── HUMAN GATE (new project) ────┐
   bootstrap interview → fills CLAUDE.md §4/§5 ──▶ (skipped if already configured)
-            ┌──── HUMAN GATE ────┐      ┌──── HUMAN GATE ────┐
-business-analyst ──▶ product-manager ──▶ architect ──▶ frontend ┐
-   (interviews you)     (Gherkin AC)     (owner-tagged tasks)   ├─▶ completion-report.md
-                                                       backend  ┘        │
-                                                                         ▼
+        ┌── GATE ──┐   ┌── GATE ──┐              ┌── GATE, if UI ──┐
+business-analyst ─▶ product-manager ─▶ architect ─▶ designer ─▶ frontend ┐
+   (interviews)       (Gherkin AC)   (owner tags)  (design.md)  ios      │
+                                                                flutter  ├─▶ completion-report.md
+                                                                backend  ┘        │
+                                                                                  ▼
    /feature consolidates → review.md    ◀── code-reviewer ‖ qa-tester ‖ api-tester
-                                                                         │
-                          routed fixes ──▶ frontend / backend ──▶ re-review
-                                                                         │
+                                                                                  │
+              routed fixes ──▶ frontend / ios / flutter / backend ──▶ re-review
+                                                                                  │
                               loop ≤ 3 rounds, then /feature reports to you
 ```
+
+Only the client agents whose platform is set in CLAUDE.md §5 run (web→frontend, iOS→ios,
+Flutter→flutter); `backend` adapts to the one backend platform. `designer` runs only for UI initiatives.
 
 ## Who hands to whom
 
@@ -28,11 +32,13 @@ business-analyst ──▶ product-manager ──▶ architect ──▶ fronten
 | bootstrap interview (new project) | pipeline | **HUMAN** | filled CLAUDE.md §4/§5 (domain + stack), approved |
 | business-analyst | product-manager | **HUMAN** | business-requirements.md (approved) |
 | product-manager | architect | **HUMAN** | product-spec.md (approved) |
-| architect | frontend + backend | auto | spec.md + owner-tagged tasks |
-| frontend, backend | reviewers | auto | completion-report.md |
+| architect | designer (if UI) | auto | spec.md + owner-tagged tasks |
+| designer | build agents | **HUMAN** | design.md (approved) — UI initiatives only |
+| architect / designer | frontend·ios·flutter + backend (present) | auto | spec + tasks + design.md |
+| build agents | reviewers | auto | completion-report.md |
 | reviewers | `/feature` | auto | findings (owner + severity tagged) |
-| `/feature` | frontend / backend | auto | routed fixes (+ the AC each maps to) |
-| **backward:** architect → PM, PM → BA, reviewer → FE/BE | — | auto | the ambiguity/defect |
+| `/feature` | frontend / ios / flutter / backend | auto | routed fixes (+ the AC each maps to) |
+| **backward:** architect → PM, designer → PM, PM → BA, reviewer → build agent | — | auto | the ambiguity/defect |
 | **escalation:** any agent → user | **HUMAN** | — | a decision needing confirmation, not a guess |
 
 ## Artifact paths (per initiative `<slug>`)
@@ -42,7 +48,8 @@ business-analyst ──▶ product-manager ──▶ architect ──▶ fronten
 | Requirements | `docs/requirements/<slug>-business-requirements.md` |
 | Product | `docs/product/<slug>-product-spec.md` |
 | Architecture | `docs/architecture/<slug>/spec.md` + `tasks/NN-*.md` |
-| Build | `docs/reports/<slug>/completion-report.md` (FE + BE owned sections) |
+| Design | `docs/design/<slug>/design.md` (UI initiatives) |
+| Build | `docs/reports/<slug>/completion-report.md` (Web/iOS/Flutter/Backend owned sections) |
 | Verify | `docs/reports/<slug>/review.md` (`/feature`-written) |
 
 Templates for each live in `docs/_templates/`. The `<slug>` is assigned by `/feature` at intake

@@ -6,7 +6,7 @@ allowed-tools: Bash(test:*), Read, Write, AskUserQuestion
 
 <!--
 cc-setup init — materializes the ONE genuinely per-project file (CLAUDE.md). Everything else
-(the 8 agents, the /feature skill, the stack-skill manifest, bootstrap.sh, and the artifact
+(the 11 agents, the /feature skill, the stack-skill manifest, bootstrap.sh, and the artifact
 templates) lives in the plugin and is referenced by the agents via ${CLAUDE_PLUGIN_ROOT} — nothing
 else is copied into the project.
 -->
@@ -31,14 +31,19 @@ Here is the starter governance template the project needs:
    - Product purpose / one-line description, and whether the repo is greenfield or existing.
    - Region / market; audience and any privacy / safety / compliance constraints.
    - Localization / RTL requirements (or single-language).
-   - Stack: web / mobile / backend / automation / AI (or "none" for each).
-   Replace every matching `<PLACEHOLDER>` with the answers. Leave the pipeline sections (§2, §3, §6,
-   §7, §8) as-is.
+   - **Project shape** — ask explicitly, because it decides which build agents `/feature` dispatches:
+     - **Full-stack web app**, or **full-stack + mobile**?
+     - If mobile: **iOS (native SwiftUI)**, **Flutter (cross-platform)**, or **both**?
+     - **Backend platform**: **.NET Web API**, **Supabase**, **Firebase**, custom (Node/other), or none?
+   - Automation / AI defaults (or "none").
+   Record the platform choices in §5 as the concrete lines (Web / Mobile / Backend). Replace every
+   matching `<PLACEHOLDER>`; leave the pipeline sections (§2, §3, §6, §7, §8) as-is.
 
-4. **Point to the stack skills.** Once §5 is filled, tell the user which stack keys apply and how to
-   install the matching specialist skills:
-   `bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh <stack-key…>`  (e.g. `.net`, `ios-swiftui`, `web`).
-   List the available keys with `bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh`.
+4. **Install the matching skills.** Map §5 to bootstrap keys and tell the user the exact command:
+   - web → `web` · iOS → `ios` · Flutter → `flutter` · backend → one of `.net` / `supabase` / `firebase`.
+   - Always add `roles` (the always-on per-agent skills, incl. the designer).
+   e.g. a web + iOS app on Supabase → `bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh web ios supabase roles`.
+   List every available key with `bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh`.
 
 5. **Stop.** `/init` only scaffolds — it does not run the pipeline. Tell the user to start work with
    `/feature <brief>`.

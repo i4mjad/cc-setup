@@ -1,6 +1,6 @@
 ---
 name: feature
-description: Orchestrate the requirements→build→verify pipeline end to end from a raw brief — Bootstrap → Requirements → Product → Architecture → Build → Verify → Route & loop → Report — dispatching the specialist subagents with human approval gates. Use when starting a new initiative from a client brief (e.g. "/feature add recurring budget alerts"), or resuming one. For a single isolated stage, dispatch that agent directly instead.
+description: Orchestrate the requirements→build→verify pipeline end to end from a raw brief — Bootstrap → Requirements → Product → Architecture → Design → Build → Verify → Route & loop → Report — dispatching the specialist subagents (business-analyst, product-manager, architect, designer, frontend/ios/flutter, backend, code-reviewer, qa-tester, api-tester) with human approval gates. Use when starting a new initiative from a client brief (e.g. "/feature add recurring budget alerts"), or resuming one. For a single isolated stage, dispatch that agent directly instead.
 user_invocable: true
 ---
 
@@ -42,29 +42,33 @@ A **gate** = pause and get explicit user approval before advancing.
    `docs/product/<slug>-product-spec.md` (MoSCoW scope, v1 vs deferred, user stories + Gherkin AC).
    **Gate.**
 5. **Architecture → spec.md + tasks.** On approval, dispatch **architect** →
-   `docs/architecture/<slug>/spec.md` + owner-tagged `tasks/NN-*.md` (each `owner: frontend|backend`).
-   If the architect escalates a decision, relay it to the user and wait. No gate otherwise — proceed.
-6. **Build (parallel).** Dispatch **frontend** (tasks `owner: frontend`) and **backend** (tasks
-   `owner: backend`) in parallel — one message, multiple Agent calls. Each fills **only its owned
-   section** of the single shared `docs/reports/<slug>/completion-report.md`. The backend/frontend
-   agents invoke their stack skills when `CLAUDE.md` §5 matches (see their agent files). Confirm both
-   sections are complete.
-7. **Verify (parallel).** Dispatch **code-reviewer**, **qa-tester**, and **api-tester** in parallel
+   `docs/architecture/<slug>/spec.md` + owner-tagged `tasks/NN-*.md` (each
+   `owner: frontend|ios|flutter|backend`, using only the platforms in §5). If the architect escalates a
+   decision, relay it and wait. No gate otherwise — proceed.
+6. **Design → design.md** *(only if the initiative has UI)*. Dispatch **designer** →
+   `docs/design/<slug>/design.md` — the platform-aware design contract the client agents implement to.
+   Relay Open Questions. **Gate.**
+7. **Build (parallel).** Dispatch **only the client agents whose platform is in §5** — **frontend**
+   (web, `owner: frontend`), **ios** (`owner: ios`), **flutter** (`owner: flutter`) — plus **backend**
+   (`owner: backend`), all in parallel (one message, multiple Agent calls). Each fills **only its owned
+   section** of the shared `docs/reports/<slug>/completion-report.md` and invokes its stack skill per §5
+   (see the agent files). Confirm every present section is complete.
+8. **Verify (parallel).** Dispatch **code-reviewer**, **qa-tester**, and **api-tester** in parallel
    against the completion report and the product spec's Gherkin AC. They **return findings to you** —
    **you** are the single writer of `docs/reports/<slug>/review.md` (sections: Code review / QA / API
    + a Routed-fixes list). Do not let reviewers write that file in parallel.
-8. **Route & loop.** Route each open issue to its tagged owner (**frontend** or **backend**) with the
-   exact finding + the AC it maps to. After fixes, re-run only the relevant reviewers. Loop
+9. **Route & loop.** Route each open issue to its tagged owner (**frontend/ios/flutter/backend**) with
+   the exact finding + the AC it maps to. After fixes, re-run only the relevant reviewers. Loop
    build→review→fix until green or **3 rounds**, then report even if not green.
-9. **Report.** Summarize to the user: what shipped, what each verifier confirmed, unresolved issues,
+10. **Report.** Summarize to the user: what shipped, what each verifier confirmed, unresolved issues,
    and the trace outcomes → AC → tasks → verification.
 
 ## Handoffs
 - Forward & gates per `CLAUDE.md` §2. You own the human gates: the bootstrap gate (new project only),
   and the two pipeline gates (after business-analyst, after product-manager).
 - Backward: if any agent reports the upstream artifact is wrong/ambiguous, route it backward
-  (architect→product-manager, product-manager→business-analyst, reviewer→frontend/backend) and re-run
-  forward from there.
+  (architect→product-manager, product-manager→business-analyst, designer→product-manager,
+  reviewer→frontend/ios/flutter/backend) and re-run forward from there.
 - Escalation: relay any agent's escalation to the user verbatim; never answer on their behalf.
 
 ## Rules of engagement

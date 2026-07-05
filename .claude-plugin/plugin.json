@@ -1,6 +1,6 @@
 {
   "name": "cc-setup",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Requirements→build→verify agent team (8 specialists) orchestrated by the /feature skill, with an /init project scaffolder and a stack-keyed specialist skill set (e.g. /dotnet-clean-arch for .NET backends).",
   "author": {
     "name": "i4mjad",

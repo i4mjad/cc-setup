@@ -14,28 +14,32 @@ repo is currently greenfield — no apps exist yet" or "Apps live under `apps/` 
 
 ## 2. The agent team & pipeline
 
-Eight specialist agents run a requirements → build → verify pipeline, orchestrated by the
-**`/feature`** skill (run by the main thread — there is no conductor agent):
+Eleven specialist agents run a requirements → build → verify pipeline, orchestrated by the
+**`/feature`** skill (run by the main thread — there is no conductor agent). The **build agents are
+platform-scoped**: `frontend` (web), `ios`, `flutter`, and an adaptive `backend` — `/feature`
+dispatches only the ones whose platform is set in §5.
 
 ```
-            ┌──── human gate ────┐      ┌──── human gate ────┐
-business-analyst ──▶ product-manager ──▶ architect ──▶ frontend ┐
-                                                       backend  ┴──▶ completion-report
-                                                                        │
-                                          ┌── code-reviewer ──┐         │
-                                          ├── qa-tester ──────┤◀────────┘
-                                          └── api-tester ─────┘
-                                                  │ (findings → /feature → review.md)
-                                                  ▼
-                                       routed fixes ──▶ frontend / backend
-                                                  │
-                                       auto-loop ≤ 3 rounds, then report to user
+      ┌── gate ──┐   ┌── gate ──┐              ┌── gate, if UI ──┐
+business-analyst ▶ product-manager ▶ architect ▶ designer ▶ frontend ┐
+                                                           ios       │
+                                                           flutter   ├─▶ completion-report
+                                                           backend   ┘        │
+                                        ┌── code-reviewer ──┐                 │
+                                        ├── qa-tester ──────┤◀────────────────┘
+                                        └── api-tester ─────┘
+                                                │ (findings → /feature → review.md)
+                                                ▼
+                                 routed fixes ─▶ frontend / ios / flutter / backend
+                                                │
+                                     auto-loop ≤ 3 rounds, then report to user
 ```
 
 - **`/feature`** orchestrates (the main thread, not a subagent): assigns the initiative `<slug>`,
-  invokes each agent in order, runs frontend+backend in parallel and the three reviewers in parallel,
-  writes the consolidated `review.md`, routes fixes, loops, and stops at the human gates. It never
-  does requirements, design, or coding itself. Start an initiative with `/feature <brief>`.
+  invokes each agent in order, runs the **present** client agents (frontend/ios/flutter) + backend in
+  parallel and the three reviewers in parallel, writes the consolidated `review.md`, routes fixes,
+  loops, and stops at the human gates. It never does requirements, design, or coding itself. Start an
+  initiative with `/feature <brief>`.
 
 ### Handoff rules
 
@@ -44,12 +48,15 @@ business-analyst ──▶ product-manager ──▶ architect ──▶ fronten
 | bootstrap intake interview → pipeline (new project only) | **HUMAN GATE** — stop for user approval of the filled §4/§5 defaults |
 | business-analyst → product-manager | **HUMAN GATE** — stop for user approval |
 | product-manager → architect | **HUMAN GATE** — stop for user approval |
-| architect → frontend + backend | automatic |
-| frontend/backend → reviewers | automatic |
-| reviewers → frontend/backend (routed fixes) | automatic, via `/feature` |
+| architect → designer (only if the initiative has UI) | automatic |
+| designer → build agents | **HUMAN GATE** — stop for design approval (UI initiatives only) |
+| architect / designer → frontend·ios·flutter + backend (present platforms) | automatic |
+| build agents → reviewers | automatic |
+| reviewers → build agents (routed fixes) | automatic, via `/feature` |
 
 **Backward handoffs** are allowed and expected when work upstream is wrong/ambiguous:
-architect → product-manager, product-manager → business-analyst, reviewers → frontend/backend.
+architect → product-manager, designer → product-manager, product-manager → business-analyst,
+reviewers → frontend/ios/flutter/backend.
 
 **Escalate-on-ambiguity rule:** the architect (and any downstream agent) does **not** invent answers
 to fill a real gap. When a decision needs *confirmation rather than an assumption*, it stops and asks
@@ -61,7 +68,7 @@ the user.
 
 ## 3. Folder & naming conventions
 
-The pipeline machinery — the 8 agents, the `/feature` skill, the `/init` command, the stack-skill
+The pipeline machinery — the 11 agents, the `/feature` skill, the `/init` command, the stack-skill
 manifest, `bootstrap.sh`, and the artifact templates — is provided by the **cc-setup plugin** and is
 never copied here (agents reference it via `${CLAUDE_PLUGIN_ROOT}`). This project only holds this
 `CLAUDE.md` and the artifacts the pipeline writes:
@@ -72,7 +79,8 @@ docs/
   requirements/<slug>-business-requirements.md
   product/<slug>-product-spec.md
   architecture/<slug>/spec.md
-  architecture/<slug>/tasks/NN-<title>.md   # each tagged owner: frontend|backend
+  architecture/<slug>/tasks/NN-<title>.md   # each tagged owner: frontend|ios|flutter|backend
+  design/<slug>/design.md                   # designer's contract (UI initiatives)
   reports/<slug>/completion-report.md
   reports/<slug>/review.md
 apps/        # client apps (web / mobile)
@@ -103,16 +111,16 @@ These hold unless an artifact explicitly overrides them. Replace with your proje
 > Same intake rule as §4: interviewed for and recorded here on a new project; never inherited from a
 > prior project. The architect may record a per-task deviation with a one-line rationale.
 
-- **Web:** <WEB_STACK — e.g. Next.js, or "none">
-- **Mobile:** <MOBILE_STACK — e.g. Flutter, SwiftUI for native iOS, or "none">
-- **Backend:** <BACKEND_STACK — e.g. .NET + PostgreSQL, Node, Supabase>
+- **Web:** <WEB_STACK — e.g. Next.js, or "none"> → build agent `frontend`, bootstrap key `web`
+- **Mobile:** <MOBILE_STACK — "iOS (SwiftUI)", "Flutter", "both", or "none"> → agents `ios` / `flutter`, keys `ios` / `flutter`
+- **Backend:** <BACKEND_STACK — one of ".NET Web API", "Supabase", "Firebase", custom, or "none"> → agent `backend`, key `.net` / `supabase` / `firebase`
 - **Automation / workflows:** <AUTOMATION_STACK — e.g. n8n, or "none">
 - **AI features:** <AI_DEFAULTS — e.g. default to the latest Claude models, or "none">
 
 **Stack skills.** The cc-setup plugin's `skills.manifest.json` maps each stack to the specialist skills
 that help build it (e.g. `.NET` backend → the `/dotnet-clean-arch` skill). Run
 `bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh <stack…>` once per project to install the matching
-ones; the **backend** and **frontend** agents then invoke them when the stack above matches (see their
+ones; the **build agents** (frontend·ios·flutter·backend) then invoke them when the stack above matches (see their
 agent files). Skills are declared, not vendored — they stay in sync with upstream and only the ones
 your stack needs get installed.
 
@@ -129,7 +137,7 @@ Write code that is **clean, SOLID, DRY, and YAGNI — but SIMPLE above all.**
 **Commit discipline.** Commit at **every small, meaningful step** — one logical change per commit, with
 a clear message describing what and why. Don't batch unrelated changes into one commit, and don't wait
 until a whole task is finished: each self-contained increment that builds/passes is its own commit.
-This keeps history reviewable and every step easy to revert. The build agents (frontend, backend)
+This keeps history reviewable and every step easy to revert. The build agents (frontend, ios, flutter, backend)
 commit as they go; `/feature` never squashes these into a single end-of-task commit.
 
 ## 7. Traceability spine (must be preserved end to end)
