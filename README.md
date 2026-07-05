@@ -18,7 +18,7 @@ claude plugin marketplace add i4mjad/cc-setup   # register this repo as a market
 claude plugin install cc-setup@cc-setup         # install the plugin
 ```
 
-Then **restart Claude Code** so the agents, `/cc-init`, and `/feature` load.
+Then **restart Claude Code** so the agents, `/initialize`, and `/feature` load.
 
 To update later: `claude plugin update cc-setup@cc-setup`. To develop locally, point the marketplace at
 a checkout instead: `claude plugin marketplace add /path/to/cc-setup`.
@@ -26,18 +26,18 @@ a checkout instead: `claude plugin marketplace add /path/to/cc-setup`.
 **2. Scaffold a project (once per project):**
 
 ```
-/cc-init
+/initialize
 ```
 
-`/cc-init` writes a starter `CLAUDE.md` and interviews you for the **project shape** — full-stack web vs
+`/initialize` writes a starter `CLAUDE.md` and interviews you for the **project shape** — full-stack web vs
 full-stack + mobile, which mobile (iOS / Flutter / both), and which backend (.NET / Supabase / Firebase /
 custom). It records that in `CLAUDE.md §5`, which decides exactly which build agents `/feature` dispatches.
-(Named `cc-init`, not `init`, to avoid clashing with Claude Code's built-in `/init`.)
+(Named `initialize`, not `init`, to avoid clashing with Claude Code's built-in `/init`.)
 
 **3. Install the skills your stack needs (once per project):**
 
 ```bash
-# /cc-init prints the exact command; e.g. a web + iOS app on Supabase:
+# /initialize prints the exact command; e.g. a web + iOS app on Supabase:
 bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh web ios supabase roles
 ```
 
@@ -133,8 +133,8 @@ prompt, so nothing breaks.
 .claude-plugin/{marketplace,plugin}.json   # marketplace + plugin manifests
 agents/*.md                                # the 11 specialist agents (auto-discovered)
 skills/feature/SKILL.md                    # the /feature pipeline orchestrator
-commands/cc-init.md                           # the /cc-init project scaffolder
-templates/CLAUDE.md                        # the starter governance /cc-init writes
+commands/initialize.md                           # the /initialize project scaffolder
+templates/CLAUDE.md                        # the starter governance /initialize writes
 skills.manifest.json                       # stack + role → skills map
 scripts/bootstrap.sh                       # installs the skills your project needs
 docs/ORCHESTRATION.md · docs/_templates/   # pipeline reference + artifact templates

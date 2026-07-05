@@ -45,5 +45,5 @@ Here is the starter governance template the project needs:
    e.g. a web + iOS app on Supabase → `bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh web ios supabase roles`.
    List every available key with `bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh`.
 
-5. **Stop.** `/cc-init` only scaffolds — it does not run the pipeline. Tell the user to start work with
+5. **Stop.** `/initialize` only scaffolds — it does not run the pipeline. Tell the user to start work with
    `/feature <brief>`.
