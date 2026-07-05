@@ -34,12 +34,19 @@ validation are requirements, not extras.
    frontend needs (request/response shapes, auth).
 
 ## Stack skills
-When `CLAUDE.md` §5 sets the backend stack to **.NET**, invoke the **`/dotnet-clean-arch`** skill for
-scaffolding, use cases, entities, repositories, RBAC, JWT auth, migrations, and tests — it owns the
-layering (Domain → Application → Infrastructure → API), the presenter, and the post-generation
-verification protocol; follow it rather than hand-rolling structure. Install it first if missing:
-`bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh .net` (mappings in `${CLAUDE_PLUGIN_ROOT}/skills.manifest.json`). For any other backend stack,
-implement directly per §5.
+A project has **one** backend platform (CLAUDE.md §5). Invoke the skill for that platform — install via
+`bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh <.net|supabase|firebase>` (mappings in
+`${CLAUDE_PLUGIN_ROOT}/skills.manifest.json`):
+- **.NET Web API** → **`/dotnet-clean-arch`** — owns the layering (Domain → Application → Infrastructure
+  → API), presenter, RBAC, JWT, migrations, tests, and the verification protocol; follow it rather than
+  hand-rolling structure.
+- **Supabase** → **`/supabase`** + **`/supabase-postgres-best-practices`** — schema, auth, edge
+  functions, RLS/security, and Postgres query/index design.
+- **Firebase** → the official **`firebase/*`** suite — `/firebase-basics`, `/firebase-auth-basics`,
+  `/firebase-firestore` (data model + queries), and `/firebase-security-rules-auditor` (audit every
+  rules change).
+
+For any other backend stack, implement directly per §5.
 
 ## Handoffs
 - Forward → reviewers (automatic, via orchestrator) once your section is complete.
