@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "cc-setup",
-      "description": "Eight-agent requirements→build→verify pipeline orchestrated by /feature, with an /init scaffolder and stack-keyed specialist skills.",
+      "description": "11-agent requirements→build→verify pipeline orchestrated by /feature, with an /initialize scaffolder and stack-keyed specialist skills.",
       "source": "./",
       "category": "workflow",
       "keywords": ["pipeline", "agents", "requirements", "review", "scaffold", "clean-architecture"]

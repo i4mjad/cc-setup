@@ -1,5 +1,5 @@
 {
-  "_comment": "Two kinds of mapping. `backend`/`frontend` map a project's STACK (CLAUDE.md §5) to build skills — pass leaf keys to bootstrap, and the matching build agent invokes them only when the stack is present. Backend keys are mutually exclusive (a project has one): .net | supabase | firebase. Frontend keys coexist (a project may ship several): web | ios | flutter. `roles` maps each PIPELINE AGENT to always-on skills it uses regardless of stack — pass `roles` to install them all, or an agent name (e.g. designer) for one. Run `bash scripts/bootstrap.sh <key…>`. kind=skills-cli → `npx skills add <ref>`; kind=plugin → `claude plugin marketplace add <marketplace>` then `claude plugin install <plugin>@<marketplaceName>`; kind=mcp → configured as an MCP server, not installed here (informational); kind=todo → no confirmed public source yet.",
+  "_comment": "Two kinds of mapping. `backend`/`frontend` map a project's STACK (CLAUDE.md §5) to build skills — pass leaf keys to bootstrap, and the matching build agent invokes them only when the stack is present. Backend keys are mutually exclusive (a project has one): .net | supabase | firebase. Frontend keys coexist (a project may ship several): web | ios | flutter. `roles` maps each PIPELINE AGENT to always-on skills it uses regardless of stack — pass `roles` to install them all, or an agent name (e.g. designer) for one. Run `bash scripts/bootstrap.sh <key…>`. kind=skills-cli → `npx skills add <ref>`; kind=plugin → `claude plugin marketplace add <marketplace>` then `claude plugin install <plugin>@<marketplaceName>`; kind=mcp → configured as an MCP server, not installed here (informational). CAUTION: refs point at third-party repos tracking their default branch — they are not version-pinned (the installers do not support commit pins), so upstream renames/deletions break installs; bootstrap.sh reports any failure explicitly.",
   "backend": {
     ".net": [
       {
@@ -54,7 +54,7 @@
         "marketplace": "AvdLee/SwiftUI-Agent-Skill",
         "marketplaceName": "swiftui-expert-skill",
         "plugin": "swiftui-expert",
-        "invoke": "swiftui-expert"
+        "invoke": "/swiftui-expert"
       }
     ],
     "flutter": [

@@ -25,9 +25,9 @@ not assume them): treat localization/RTL as first-class and apply the domain's a
 2. Implement the web app under `apps/`, matching existing patterns and the web stack (CLAUDE.md §5).
    **Commit at every small, meaningful step** — one logical change per commit (CLAUDE.md §6).
 3. Self-check each task against its AC before reporting.
-4. Fill **only the Web section** of `docs/reports/<slug>/completion-report.md` (create it from
-   `${CLAUDE_PLUGIN_ROOT}/docs/_templates/completion-report.template.md` if absent; otherwise edit only
-   your section): what you built, which tasks/AC are covered, how to run/preview it, integration notes.
+4. Fill **only the Web section** of `docs/reports/<slug>/completion-report.md` (the orchestrator
+   pre-creates the file from the template before dispatch — never create it or touch another section):
+   what you built, which tasks/AC are covered, how to run/preview it, integration notes.
 
 ## Stack skills
 When the web stack is set (CLAUDE.md §5), invoke — install via

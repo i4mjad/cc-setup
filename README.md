@@ -6,10 +6,13 @@ skill, that takes a raw brief all the way to reviewed, verified code — stoppin
 along the way. The build agents are **platform-scoped**, so a web-only app and a web + iOS + Flutter app
 each get exactly the agents they need.
 
-Install it once and it's available in **every** project — no copy-paste, auto-updated via
-`claude plugin update`.
+Install it once and it's available in **every** project — no copy-paste. The plugin's own files
+(agents, commands, hooks, templates) update via `claude plugin update`; the third-party stack/role
+skills installed by `bootstrap.sh` are separate installs, updated from their own upstreams.
 
 ## Install
+
+Prerequisites: the `claude` CLI, plus `jq`, `npx`, and network access for `bootstrap.sh`.
 
 **1. Install the plugin (once, globally):**
 
@@ -125,7 +128,12 @@ bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh              # list every key
 ```
 
 Each agent invokes its skill **if present** — skip an install and the agent falls back to its own
-prompt, so nothing breaks.
+prompt, so nothing breaks. `bootstrap.sh` reports any failed install explicitly (exit code 1 with a
+summary) so a fallback never happens silently.
+
+> **Supply-chain note:** the manifest's skill refs point at third-party repos and track their default
+> branches — they are not version-pinned (the installers don't support commit pins). Review what you
+> install; an upstream rename or deletion surfaces as an explicit bootstrap failure.
 
 ## What's in the plugin
 
@@ -133,12 +141,18 @@ prompt, so nothing breaks.
 .claude-plugin/{marketplace,plugin}.json   # marketplace + plugin manifests
 agents/*.md                                # the 11 specialist agents (auto-discovered)
 skills/feature/SKILL.md                    # the /feature pipeline orchestrator
-commands/initialize.md                           # the /initialize project scaffolder
+commands/initialize.md                     # the /initialize project scaffolder
+hooks/                                     # PreToolUse guard enforcing the write boundaries
 templates/CLAUDE.md                        # the starter governance /initialize writes
 skills.manifest.json                       # stack + role → skills map
 scripts/bootstrap.sh                       # installs the skills your project needs
+scripts/validate.sh                        # the plugin's own consistency checks (run by CI)
 docs/ORCHESTRATION.md · docs/_templates/   # pipeline reference + artifact templates
 ```
+
+**Enforced boundaries:** the reviewer agents (code-reviewer, qa-tester, api-tester) declare read-only
+`tools:`, and a PreToolUse hook blocks any subagent writing `review.md`, reviewers writing files, and
+spec/design agents writing app code — the pipeline's rules are mechanical, not just prompts.
 
 ## Local development / dogfooding
 

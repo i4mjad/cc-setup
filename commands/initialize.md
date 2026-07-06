@@ -44,6 +44,9 @@ Here is the starter governance template the project needs:
    - Always add `roles` (the always-on per-agent skills, incl. the designer).
    e.g. a web + iOS app on Supabase → `bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh web ios supabase roles`.
    List every available key with `bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh`.
+   If an answer maps to **no build agent** (e.g. React Native, a desktop app), say so explicitly:
+   the pipeline has no client agent for it, and `/feature` would skip that platform — record it in §5
+   with a "no pipeline agent" note rather than silently mapping it to the nearest key.
 
 5. **Stop.** `/initialize` only scaffolds — it does not run the pipeline. Tell the user to start work with
    `/feature <brief>`.

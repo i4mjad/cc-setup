@@ -14,7 +14,7 @@ repo is currently greenfield — no apps exist yet" or "Apps live under `apps/` 
 
 ## 2. The agent team & pipeline
 
-Eleven specialist agents run a requirements → build → verify pipeline, orchestrated by the
+11 specialist agents run a requirements → build → verify pipeline, orchestrated by the
 **`/feature`** skill (run by the main thread — there is no conductor agent). The **build agents are
 platform-scoped**: `frontend` (web), `ios`, `flutter`, and an adaptive `backend` — `/feature`
 dispatches only the ones whose platform is set in §5.
@@ -63,8 +63,9 @@ to fill a real gap. When a decision needs *confirmation rather than an assumptio
 the user. Assumptions are only acceptable when explicitly low-risk and recorded in the artifact.
 
 **Loop policy:** after fixes, `/feature` re-runs the relevant reviewers and loops
-build → review → fix → re-review until all issues clear or **3 rounds** are reached, then reports to
-the user.
+build → review → fix → re-review until **green — zero open blocker and major findings** (minors may
+ship, listed in the report) — or **3 rounds** are reached, then reports to the user. If blockers or
+majors remain at the cap, the report opens with an explicit **NOT SHIPPABLE** status.
 
 ## 3. Folder & naming conventions
 

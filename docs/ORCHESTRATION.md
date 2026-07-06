@@ -52,21 +52,38 @@ Flutter→flutter); `backend` adapts to the one backend platform. `designer` run
 | Build | `docs/reports/<slug>/completion-report.md` (Web/iOS/Flutter/Backend owned sections) |
 | Verify | `docs/reports/<slug>/review.md` (`/feature`-written) |
 
-Templates for each live in `docs/_templates/`. The `<slug>` is assigned by `/feature` at intake
-and is the traceability key.
+Templates for each live in `docs/_templates/` (including `design.template.md`). The `<slug>` is
+assigned by `/feature` at intake and is the traceability key.
 
 ## Rules that are easy to forget
 
 - **Bootstrap before anything** on a new project: if CLAUDE.md §4/§5 still hold `<PLACEHOLDER>`s,
   `/feature` interviews you to fill them and stops at a human gate. Never inherit domain/stack defaults
   from a prior project. Skipped once the project is configured.
-- **Two pipeline human gates** (BA→PM, PM→architect). Everything else is automatic — except escalations.
+- **Three pipeline human gates** (BA→PM, PM→architect, designer→build for UI initiatives). Everything
+  else is automatic — except escalations.
 - **Escalate, don't assume.** When a decision needs confirmation, stop and ask the user.
 - **Backward handoffs are normal**, not failures — push ambiguity back to where it belongs.
-- **Loop cap = 3 rounds**, then report to the user even if not green.
-- **Owned sections / single writer:** FE and BE each own one section of the completion report;
-  `/feature` is the sole writer of `review.md`.
+- **Green = zero open blockers and majors.** Minors may ship but are listed in the report.
+- **Loop cap = 3 rounds**, then report to the user even if not green — leading with an explicit
+  NOT SHIPPABLE status if blockers/majors remain.
+- **Owned sections / single writer:** each dispatched build agent (frontend/ios/flutter/backend) owns
+  one section of the completion report, which `/feature` pre-creates; `/feature` is the sole writer of
+  `review.md`.
 - **SIMPLE wins.** Over-engineering to satisfy a principle is a review finding, not a virtue.
+
+## Enforcement & known limits
+
+- **Read-only reviewers are enforced, not just prompted:** code-reviewer, qa-tester, and api-tester
+  declare restricted `tools:` (no Write/Edit), and the plugin ships a PreToolUse hook
+  (`hooks/guard-writes.sh`) that blocks any subagent writing `review.md`, any reviewer writing files,
+  and spec/design agents writing under `apps/`/`services/`.
+- **Native-client verification is test-based, not driven:** qa-tester reaches only the browser. iOS
+  and Flutter AC are verified by the build agents' own XCTest / widget-test suites, whose results are
+  required evidence in the completion report. A simulator-driving mobile-qa agent is a possible future
+  addition.
+- **Per-role models:** agents inherit the session model by default. If you want cheaper reviewers or a
+  stronger architect, add a `model:` field to the agent frontmatter — deliberately not preset here.
 
 ## Starting an initiative
 
