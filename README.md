@@ -8,7 +8,8 @@ each get exactly the agents they need.
 
 Install it once and it's available in **every** project — no copy-paste. The plugin's own files
 (agents, commands, hooks, templates) update via `claude plugin update`; the third-party stack/role
-skills installed by `bootstrap.sh` are separate installs, updated from their own upstreams.
+skills installed by `bootstrap.sh` are separate installs, refreshed from their own upstreams with
+`bootstrap.sh --update` (see [Bootstrap](#bootstrap)).
 
 ## Install
 
@@ -53,6 +54,11 @@ bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh web ios supabase roles
 Only `CLAUDE.md` is written into your project — everything else lives in the plugin (referenced via
 `${CLAUDE_PLUGIN_ROOT}`).
 
+> **Optional — issue tracker for `/wayfinder`:** the business-analyst can use `/wayfinder` to plan
+> large, multi-session efforts as decision tickets. It needs a tracker: run `/setup-matt-pocock-skills`
+> and choose **github** (install & authenticate the `gh` CLI: `gh auth login`), **gitlab**, or
+> **local markdown**. Linear isn't supported upstream. Skip this and the agent just uses `/grill-me`.
+
 ## The 11 agents
 
 | Agent | Role |
@@ -84,6 +90,10 @@ business-analyst ─[GATE]─▶ product-manager ─[GATE]─▶ architect ─�
 ```
 
 - **Human gates**: after business-analyst, after product-manager, and after designer (UI only).
+- **Large scope auto-phases**: at intake `/feature` sizes up the brief on its own — if it's too big for
+  one pass (e.g. a new project from scratch), it proposes an ordered set of shippable **phases**
+  (`<project>-phase-N-<name>`), gets your approval, then runs the whole flow once per phase. You don't
+  have to ask for this; routine features stay a single phase.
 - **Backward handoffs** expected when upstream is wrong/ambiguous (architect → PM → BA; designer → PM).
 - **Escalate-on-ambiguity**: downstream agents stop and ask rather than guess.
 
@@ -107,13 +117,18 @@ Always-on per pipeline agent (the `roles` section):
 
 | Agent | Role skill | Source |
 |---|---|---|
-| business-analyst | `/grill-me` | mattpocock/skills (454K) |
+| business-analyst | `/grill-me`, `/wayfinder`¹ | mattpocock/skills (454K) |
 | product-manager | `/to-prd`, `/to-issues` | mattpocock/skills |
 | architect | `/architecture-designer` | jeffallan/claude-skills |
 | designer | `/design-taste-frontend`, `/high-end-visual-design`, `/refactoring-ui-skills`, figma, Mobbin MCP | leonxlnx/taste-skill (217K), plugins/MCP |
 | code-reviewer | `/ponytail-review`, `/ponytail-audit`, `/code-review-graph:review-delta` | plugins |
 | qa-tester | Playwright MCP | `playwright` plugin |
 | api-tester | `/api-testing` | secondsky/claude-skills |
+
+¹ `/wayfinder` is optional, for efforts too big for one session. It needs an issue tracker — run
+`/setup-matt-pocock-skills` and pick **github** (via the `gh` CLI, authenticated with `gh auth login`),
+**gitlab**, or **local markdown**. There is no Linear tracker upstream. Without a tracker configured,
+the business-analyst stays on `/grill-me`.
 
 ## Bootstrap
 
@@ -125,6 +140,14 @@ bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh web ios supabase roles
 bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh roles         # all role skills
 bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh --dry-run web # preview commands
 bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh              # list every key
+```
+
+**Update installed skills** from their upstreams (they track default branches, so this pulls the
+latest) with the same keys plus `--update`:
+
+```bash
+bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh --update roles          # refresh every role skill
+bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh --update web ios roles  # refresh a whole project's set
 ```
 
 Each agent invokes its skill **if present** — skip an install and the agent falls back to its own

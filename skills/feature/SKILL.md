@@ -34,7 +34,16 @@ A **gate** = pause and get explicit user approval before advancing.
    backend / automation / AI). Write the answers into `CLAUDE.md` §1, §4, §5. **Gate** — present the
    filled defaults and wait for approval. **Never inherit domain/stack defaults from a prior project.**
    If §4/§5 are already filled, skip straight to Intake.
-2. **Intake.** Confirm the `<slug>` derived at Setup; all artifacts are keyed by it.
+2. **Intake & scope check.** Confirm the `<slug>` derived at Setup; all artifacts are keyed by it.
+   **Assess scope by default — the user does not have to ask for this.** If the brief is too big to
+   carry cleanly through one pipeline pass — several loosely-coupled capability areas, or more than a
+   single coherent build's worth of work (common when standing up a **new project** from scratch) —
+   split it yourself into an ordered set of **phases**, each a shippable increment with its own
+   `<project>-phase-N-<name>` slug and a one-line "delivers …". Propose that phase list to the user
+   and get approval (**phase-plan gate**), then run the full pipeline (steps 3–10) once per phase in
+   order, shipping between phases; a phase may reveal work that reshapes later phases, so re-confirm
+   the remaining list if it changes. A normal-sized initiative is **one phase** — skip this and carry
+   on. Don't over-split: phases are for genuinely large scope, not routine features.
 3. **Requirements → business-requirements.md.** Dispatch **business-analyst** with the brief. It
    interviews the user (relay its Open Questions) and writes
    `docs/requirements/<slug>-business-requirements.md`. **Gate.**
@@ -75,8 +84,8 @@ A **gate** = pause and get explicit user approval before advancing.
 
 ## Handoffs
 - Forward & gates per `CLAUDE.md` §2. You own the human gates: the bootstrap gate (new project only),
-  and the three pipeline gates (after business-analyst, after product-manager, and after designer —
-  UI initiatives only).
+  the phase-plan gate (large scope only — step 2), and the three pipeline gates (after
+  business-analyst, after product-manager, and after designer — UI initiatives only).
 - Backward: if any agent reports the upstream artifact is wrong/ambiguous, route it backward
   (architect→product-manager, product-manager→business-analyst, designer→product-manager,
   reviewer→frontend/ios/flutter/backend) and re-run forward from there.

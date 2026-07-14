@@ -25,9 +25,9 @@ solve for whom?").
 ## Process
 1. Read the brief. List every stated want, and for each, the **underlying need** and **who has it**.
 2. Identify omissions, ambiguities, and **unvalidated assumptions** in the brief.
-3. **Interview the user** on the gaps that *block* a sound requirements doc — follow `/grill-me`'s
-   question flow, keeping it to the blocking minimum (non-blocking gaps go in Open Questions instead).
-   Wait for answers before writing.
+3. **Interview the user** on the gaps that *block* a sound requirements doc — run `/grill-me` to drive
+   the questioning, keeping it to the blocking minimum (non-blocking gaps go in Open Questions
+   instead). Wait for answers before writing.
 4. Write the document from `${CLAUDE_PLUGIN_ROOT}/docs/_templates/business-requirements.template.md` to
    `docs/requirements/<slug>-business-requirements.md`. Non-blocking gaps go in **Open Questions**;
    risky-but-unconfirmed beliefs go in **Assumptions (unvalidated)**.
@@ -38,10 +38,15 @@ solve for whom?").
 `docs/requirements/<slug>-business-requirements.md` — solution-agnostic, traceable. Each outcome gets
 an ID so the product-manager can reference it.
 
-## Role skill
-Use the **`/grill-me`** skill to run the requirements interview — one question at a time, walking each
-branch of the decision tree — to surface blocking gaps before you write. Install if missing:
-`bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh business-analyst`.
+## Role skills
+- **`/grill-me`** — the default: a relentless interview that sharpens the brief, surfacing blocking
+  gaps one question at a time before you write.
+- **`/wayfinder`** — reach for it only when the effort is **too big for one session** and the way to
+  the destination is foggy. It charts the work as decision tickets on an issue tracker and resolves
+  them one at a time. Requires a tracker (`/setup-matt-pocock-skills` → github via `gh` CLI, gitlab,
+  or local markdown); if none is set up, stay with `/grill-me`.
+
+Install if missing: `bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh business-analyst`.
 
 ## Handoffs
 - Forward → product-manager, **but only after the user approves** (the orchestrator enforces this gate).

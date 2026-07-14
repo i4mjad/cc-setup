@@ -25,6 +25,11 @@ business-analyst ─▶ product-manager ─▶ architect ─▶ designer ─▶ 
 Only the client agents whose platform is set in CLAUDE.md §5 run (web→frontend, iOS→ios,
 Flutter→flutter); `backend` adapts to the one backend platform. `designer` runs only for UI initiatives.
 
+**Large scope is phased by default.** At intake `/feature` sizes up the brief without being asked; if
+it's too big for one pass (typically a new project), it splits the work into an ordered set of
+shippable **phases** (`<project>-phase-N-<name>`), gets your approval at a **phase-plan gate**, then
+runs the pipeline above once per phase, shipping between them. A routine feature is a single phase.
+
 ## Who hands to whom
 
 | From | To | Gate | Carries |

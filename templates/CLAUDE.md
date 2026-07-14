@@ -46,6 +46,7 @@ business-analyst ▶ product-manager ▶ architect ▶ designer ▶ frontend ┐
 | Handoff | Type |
 |---|---|
 | bootstrap intake interview → pipeline (new project only) | **HUMAN GATE** — stop for user approval of the filled §4/§5 defaults |
+| intake scope check → phase plan (large scope only) | **HUMAN GATE** — stop for approval of the proposed phases (auto-proposed, not user-requested) |
 | business-analyst → product-manager | **HUMAN GATE** — stop for user approval |
 | product-manager → architect | **HUMAN GATE** — stop for user approval |
 | architect → designer (only if the initiative has UI) | automatic |
@@ -90,7 +91,9 @@ services/    # backend services
 
 **`<slug>`** is the initiative key (e.g. `<example-slug>`). `/feature` assigns it at intake
 from the brief and it is threaded through every artifact path. It is how the traceability spine is
-followed end to end. One slug = one initiative/epic.
+followed end to end. One slug = one initiative/epic. For large scope, `/feature` splits the work into
+ordered **phases** at intake (each its own `<project>-phase-N-<name>` slug) and runs the pipeline per
+phase — you don't have to ask; routine features stay a single slug.
 
 ## 4. Domain defaults
 
@@ -123,7 +126,8 @@ that help build it (e.g. `.NET` backend → the `/dotnet-clean-arch` skill). Run
 `bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh <stack…>` once per project to install the matching
 ones; the **build agents** (frontend·ios·flutter·backend) then invoke them when the stack above matches (see their
 agent files). Skills are declared, not vendored — they stay in sync with upstream and only the ones
-your stack needs get installed.
+your stack needs get installed. To refresh installed skills to their latest upstream, re-run the same
+command with `--update` (e.g. `bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh --update <stack…> roles`).
 
 ## 6. Coding standards
 

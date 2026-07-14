@@ -73,6 +73,13 @@
         "kind": "skills-cli",
         "ref": "mattpocock/skills@grill-me",
         "invoke": "/grill-me"
+      },
+      {
+        "name": "wayfinder",
+        "kind": "skills-cli",
+        "ref": "mattpocock/skills@wayfinder",
+        "invoke": "/wayfinder",
+        "note": "For big multi-session efforts; charts decision tickets on an issue tracker. Needs a tracker configured — run /setup-matt-pocock-skills and pick github (via gh CLI), gitlab, or local markdown. No Linear tracker upstream."
       }
     ],
     "product-manager": [
