@@ -76,6 +76,11 @@ assigned by `/feature` at intake and is the traceability key.
   one section of the completion report, which `/feature` pre-creates; `/feature` is the sole writer of
   `review.md`.
 - **SIMPLE wins.** Over-engineering to satisfy a principle is a review finding, not a virtue.
+- **Worktree isolation is automatic.** `/feature` creates `.worktrees/<slug>` off `develop` at Setup and
+  merges it back (`--no-ff`, conflicts resolved) once the initiative ships green, then removes the
+  worktree and branch — see `CLAUDE.md` §9. This is what makes concurrent `/feature` sessions on the
+  same repo safe. A `NOT SHIPPABLE` result at the loop cap skips the merge and leaves the worktree for
+  the next session to resume from.
 
 ## Enforcement & known limits
 
@@ -94,5 +99,6 @@ assigned by `/feature` at intake and is the traceability key.
 
 `/feature <brief>` (the brief inline or a `thoughts.md` seed file). On a brand-new project it first
 runs the **bootstrap interview** to fill CLAUDE.md §4/§5 (domain + stack) and stops for your approval;
-on an already-configured project it skips that. Then it assigns a slug, runs the business-analyst
-(which interviews you on requirements), and stops at the first pipeline gate.
+on an already-configured project it skips that. Then it assigns a slug, creates that initiative's git
+worktree (`.worktrees/<slug>` off `develop`), runs the business-analyst (which interviews you on
+requirements), and stops at the first pipeline gate.

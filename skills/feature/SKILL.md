@@ -21,6 +21,10 @@ Only subagents produce deliverables. They run heads-down and cannot talk to the 
 ## Setup
 - Take the raw brief from the user's `/feature <brief>` input (or a seed file like `thoughts.md`).
 - Derive a short kebab-case initiative `<slug>`; state it to the user. Every artifact uses this slug.
+- **Isolate in a worktree.** `git worktree add .worktrees/<slug> -b feature/<slug> develop` (fall back
+  to the current branch if `develop` doesn't exist); ensure `.worktrees/` is gitignored (append if
+  missing). Do every stage below — every dispatched agent, every commit — inside that worktree. This is
+  what makes a concurrent `/feature` session on this repo safe (CLAUDE.md §9).
 - Create a TaskList mirroring the stages below and start at Bootstrap.
 
 ## Process
@@ -81,6 +85,12 @@ A **gate** = pause and get explicit user approval before advancing.
    and the trace outcomes → AC → tasks → verification. If blockers or majors remain after the 3-round
    cap, the report must **open with an explicit `NOT SHIPPABLE` status** and list them first — never a
    neutral summary.
+11. **Merge & cleanup** (only when green). `git checkout develop && git merge --no-ff feature/<slug>`.
+   Resolve any conflicts before considering the initiative done — never drop a conflicting hunk or force
+   one side to win without checking intent against both changes. On a clean merge, remove the worktree
+   (`git worktree remove .worktrees/<slug>`) and delete the branch (`git branch -d feature/<slug>`). If
+   the loop hit the 3-round cap and reported `NOT SHIPPABLE`, skip this — leave the worktree and branch
+   in place for the next session to resume from.
 
 ## Handoffs
 - Forward & gates per `CLAUDE.md` §2. You own the human gates: the bootstrap gate (new project only),
@@ -102,4 +112,5 @@ A **gate** = pause and get explicit user approval before advancing.
 ## Definition of done
 Every dispatched platform's completion-report section filled (absent/no-task platforms marked n/a);
 `review.md` green — zero open blockers and majors — or the 3-round cap hit and reported as
-NOT SHIPPABLE; every shipped piece traceable to a business outcome. Then hand the result to the user.
+NOT SHIPPABLE; every shipped piece traceable to a business outcome; if green, the worktree merged into
+`develop` and cleaned up (step 11). Then hand the result to the user.

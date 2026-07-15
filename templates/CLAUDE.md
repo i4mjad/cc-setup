@@ -68,6 +68,10 @@ build → review → fix → re-review until **green — zero open blocker and m
 ship, listed in the report) — or **3 rounds** are reached, then reports to the user. If blockers or
 majors remain at the cap, the report opens with an explicit **NOT SHIPPABLE** status.
 
+**Worktree isolation:** every initiative runs in its own git worktree, created at Setup and merged back
+into `develop` automatically once it ships green — see §9. This makes concurrent `/feature` sessions
+safe without you having to opt in.
+
 ## 3. Folder & naming conventions
 
 The pipeline machinery — the 11 agents, the `/feature` skill, the `/initialize` command, the stack-skill
@@ -163,3 +167,22 @@ work back to a business outcome, that is a signal to hand backward, not to proce
 
 No roles, files, or ceremony that won't actually be used. Keep artifacts as short as they can be while
 still carrying the spine.
+
+## 9. Parallel sessions (git worktrees)
+
+`/feature` isolates **every** initiative in its own git worktree automatically, not just when you
+remember to ask for it — this is what makes running more than one `/feature` session against this repo
+at the same time safe by default; without it, concurrent sessions would stomp each other's uncommitted
+changes and branch state in a shared working directory.
+
+- **At Setup**, `/feature` creates `git worktree add .worktrees/<slug> -b feature/<slug> develop`
+  (falling back to the current branch if `develop` doesn't exist) and ensures `.worktrees/` is
+  gitignored. Every dispatched agent and every commit for that initiative happens inside that worktree.
+- **On completion**, once the initiative ships green, `/feature` merges back into `develop` locally —
+  `git checkout develop && git merge --no-ff feature/<slug>` — resolving any conflicts before calling
+  the initiative done; it never drops a conflicting hunk or forces one side to win without checking
+  intent against both changes.
+- **Cleanup** — once merged, `/feature` removes the worktree (`git worktree remove .worktrees/<slug>`)
+  and deletes the branch (`git branch -d feature/<slug>`).
+- If the initiative hits the 3-round loop cap and reports `NOT SHIPPABLE`, the worktree and branch are
+  left in place (not merged) so the next session can resume the fix.

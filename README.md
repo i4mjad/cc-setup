@@ -96,6 +96,9 @@ business-analyst ─[GATE]─▶ product-manager ─[GATE]─▶ architect ─�
   have to ask for this; routine features stay a single phase.
 - **Backward handoffs** expected when upstream is wrong/ambiguous (architect → PM → BA; designer → PM).
 - **Escalate-on-ambiguity**: downstream agents stop and ask rather than guess.
+- **Worktree isolation**: `/feature` runs every initiative in its own git worktree off `develop` and
+  merges it back automatically once it ships green — safe to run more than one `/feature` session on
+  this repo at a time (`CLAUDE.md §9`).
 
 ## Stack skills
 

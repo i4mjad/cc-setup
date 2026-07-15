@@ -37,7 +37,7 @@ Here is the starter governance template the project needs:
      - **Backend platform**: **.NET Web API**, **Supabase**, **Firebase**, custom (Node/other), or none?
    - Automation / AI defaults (or "none").
    Record the platform choices in §5 as the concrete lines (Web / Mobile / Backend). Replace every
-   matching `<PLACEHOLDER>`; leave the pipeline sections (§2, §3, §6, §7, §8) as-is.
+   matching `<PLACEHOLDER>`; leave the pipeline sections (§2, §3, §6, §7, §8, §9) as-is.
 
 4. **Install the matching skills.** Map §5 to bootstrap keys and tell the user the exact command:
    - web → `web` · iOS → `ios` · Flutter → `flutter` · backend → one of `.net` / `supabase` / `firebase`.
