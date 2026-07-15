@@ -77,7 +77,14 @@ for key in "${keys[@]}"; do
           run claude plugin install "$(jq -r '.plugin' <<<"$s")@$(jq -r '.marketplaceName' <<<"$s")"
         fi ;;
       mcp)
-        echo "  ~ $name is an MCP server — configure separately ($(jq -r '.invoke' <<<"$s"))" ;;
+        cmd="$(jq -r '.command // empty' <<<"$s")"
+        if [ -n "$cmd" ]; then
+          run bash -c "$cmd"
+        else
+          echo "  ~ $name is an MCP server — configure separately ($(jq -r '.invoke' <<<"$s"))"
+        fi ;;
+      script)
+        run bash -c "$(jq -r '.command' <<<"$s")" ;;
       *)
         echo "  ! $name: unknown kind '$kind' — skipping"; failed+=("$name (unknown kind: $kind)") ;;
     esac

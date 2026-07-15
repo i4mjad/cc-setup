@@ -107,7 +107,7 @@ mutually exclusive; frontend keys coexist.
 
 | Key | Agent | Skill(s) | Source |
 |---|---|---|---|
-| `web` | frontend | `/tailwind-design-system`, `/accessibility` | wshobson/agents, addyosmani/web-quality-skills |
+| `web` | frontend | `/tailwind-design-system`, `/accessibility`, ReUI MCP + skills | wshobson/agents, addyosmani/web-quality-skills, mcp.reui.io |
 | `ios` | ios | `swiftui-expert` | AvdLee/SwiftUI-Agent-Skill (plugin) |
 | `flutter` | flutter | official `flutter/skills` suite | flutter/skills (20K+/skill) |
 | `.net` | backend | `/dotnet-clean-arch` | i4mjad/dotnet-clean-arch-skill |
@@ -156,6 +156,13 @@ bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh --update web ios roles  # refres
 Each agent invokes its skill **if present** — skip an install and the agent falls back to its own
 prompt, so nothing breaks. `bootstrap.sh` reports any failed install explicitly (exit code 1 with a
 summary) so a fallback never happens silently.
+
+**Picking up new manifest entries** (an existing project that scaffolded before a skill was added to
+`skills.manifest.json`): run `claude plugin update cc-setup@cc-setup` to pull the updated manifest, then
+re-run the **plain** (non-`--update`) form for the affected key, e.g. `bootstrap.sh web` — it installs
+whatever is new and safely re-runs whatever you already have. Use the plain form, not `--update`, for
+this: `--update` assumes every `plugin`-kind entry under that key is already installed (it runs
+`claude plugin update` instead of `install`), which fails on an entry that's newly added.
 
 > **Supply-chain note:** the manifest's skill refs point at third-party repos and track their default
 > branches — they are not version-pinned (the installers don't support commit pins). Review what you

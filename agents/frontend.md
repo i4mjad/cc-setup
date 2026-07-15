@@ -34,6 +34,7 @@ When the web stack is set (CLAUDE.md §5), invoke — install via
 `bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh web` (mappings in `${CLAUDE_PLUGIN_ROOT}/skills.manifest.json`):
 - **`/tailwind-design-system`** — design tokens, component libraries, responsive patterns.
 - **`/accessibility`** — WCAG 2.2, keyboard nav, screen-reader support.
+- **ReUI MCP + skills** — component registry/docs and install patterns for ReUI components.
 
 ## Handoffs
 - Forward → reviewers (automatic, via orchestrator) once your section is complete.
