@@ -40,10 +40,15 @@ custom). It records that in `CLAUDE.md §5`, which decides exactly which build a
 
 **3. Install the skills your stack needs (once per project):**
 
-```bash
-# /initialize prints the exact command; e.g. a web + iOS app on Supabase:
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh web ios supabase roles
 ```
+# /initialize prints the exact command; e.g. a web + iOS app on Supabase:
+/bootstrap web ios supabase roles
+```
+
+Run this as a **Claude Code command**, not a raw shell command — `/bootstrap` wraps `bootstrap.sh` and
+runs it through Claude Code's own tool calls, where `${CLAUDE_PLUGIN_ROOT}` resolves. Pasting
+`bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh ...` straight into a plain terminal fails — that
+variable doesn't exist outside Claude Code.
 
 **4. Run the pipeline (any time):**
 
@@ -135,22 +140,24 @@ the business-analyst stays on `/grill-me`.
 
 ## Bootstrap
 
-Install exactly what a project's shape needs:
+`/bootstrap` is a Claude Code command that wraps `scripts/bootstrap.sh` — use it instead of running the
+script directly in a terminal (see the note in [Install](#install)). Install exactly what a project's
+shape needs:
 
-```bash
+```
 # a web + iOS app on Supabase, plus every role skill:
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh web ios supabase roles
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh roles         # all role skills
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh --dry-run web # preview commands
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh              # list every key
+/bootstrap web ios supabase roles
+/bootstrap roles         # all role skills
+/bootstrap --dry-run web # preview commands
+/bootstrap                # list every key
 ```
 
 **Update installed skills** from their upstreams (they track default branches, so this pulls the
 latest) with the same keys plus `--update`:
 
-```bash
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh --update roles          # refresh every role skill
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh --update web ios roles  # refresh a whole project's set
+```
+/bootstrap --update roles          # refresh every role skill
+/bootstrap --update web ios roles  # refresh a whole project's set
 ```
 
 Each agent invokes its skill **if present** — skip an install and the agent falls back to its own
@@ -159,10 +166,14 @@ summary) so a fallback never happens silently.
 
 **Picking up new manifest entries** (an existing project that scaffolded before a skill was added to
 `skills.manifest.json`): run `claude plugin update cc-setup@cc-setup` to pull the updated manifest, then
-re-run the **plain** (non-`--update`) form for the affected key, e.g. `bootstrap.sh web` — it installs
+re-run the **plain** (non-`--update`) form for the affected key, e.g. `/bootstrap web` — it installs
 whatever is new and safely re-runs whatever you already have. Use the plain form, not `--update`, for
 this: `--update` assumes every `plugin`-kind entry under that key is already installed (it runs
 `claude plugin update` instead of `install`), which fails on an entry that's newly added.
+
+> Scripting/CI, where there's no Claude Code session to resolve `${CLAUDE_PLUGIN_ROOT}`: run
+> `scripts/bootstrap.sh` directly with the plugin's real path, e.g.
+> `bash ~/.claude/plugins/cache/cc-setup/cc-setup/<version>/scripts/bootstrap.sh web`.
 
 > **Supply-chain note:** the manifest's skill refs point at third-party repos and track their default
 > branches — they are not version-pinned (the installers don't support commit pins). Review what you

@@ -39,11 +39,13 @@ Here is the starter governance template the project needs:
    Record the platform choices in §5 as the concrete lines (Web / Mobile / Backend). Replace every
    matching `<PLACEHOLDER>`; leave the pipeline sections (§2, §3, §6, §7, §8, §9) as-is.
 
-4. **Install the matching skills.** Map §5 to bootstrap keys and tell the user the exact command:
+4. **Install the matching skills.** Map §5 to bootstrap keys and tell the user the exact `/bootstrap`
+   command to run (it wraps `bootstrap.sh` — don't hand them the raw `bash ${CLAUDE_PLUGIN_ROOT}/...`
+   form, that only resolves inside Claude Code's own tool calls and fails if pasted into a plain terminal):
    - web → `web` · iOS → `ios` · Flutter → `flutter` · backend → one of `.net` / `supabase` / `firebase`.
    - Always add `roles` (the always-on per-agent skills, incl. the designer).
-   e.g. a web + iOS app on Supabase → `bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh web ios supabase roles`.
-   List every available key with `bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh`.
+   e.g. a web + iOS app on Supabase → `/bootstrap web ios supabase roles`.
+   List every available key with `/bootstrap`.
    If an answer maps to **no build agent** (e.g. React Native, a desktop app), say so explicitly:
    the pipeline has no client agent for it, and `/feature` would skip that platform — record it in §5
    with a "no pipeline agent" note rather than silently mapping it to the nearest key.

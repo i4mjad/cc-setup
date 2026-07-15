@@ -126,12 +126,14 @@ These hold unless an artifact explicitly overrides them. Replace with your proje
 - **AI features:** <AI_DEFAULTS — e.g. default to the latest Claude models, or "none">
 
 **Stack skills.** The cc-setup plugin's `skills.manifest.json` maps each stack to the specialist skills
-that help build it (e.g. `.NET` backend → the `/dotnet-clean-arch` skill). Run
-`bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh <stack…>` once per project to install the matching
-ones; the **build agents** (frontend·ios·flutter·backend) then invoke them when the stack above matches (see their
-agent files). Skills are declared, not vendored — they stay in sync with upstream and only the ones
-your stack needs get installed. To refresh installed skills to their latest upstream, re-run the same
-command with `--update` (e.g. `bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh --update <stack…> roles`).
+that help build it (e.g. `.NET` backend → the `/dotnet-clean-arch` skill). Run `/bootstrap <stack…>`
+once per project to install the matching ones; the **build agents** (frontend·ios·flutter·backend) then
+invoke them when the stack above matches (see their agent files). Skills are declared, not vendored —
+they stay in sync with upstream and only the ones your stack needs get installed. To refresh installed
+skills to their latest upstream, re-run the same command with `--update` (e.g.
+`/bootstrap --update <stack…> roles`). Run `/bootstrap` as a Claude Code command, not a raw shell
+command — it wraps `bootstrap.sh` and resolves `${CLAUDE_PLUGIN_ROOT}`, which only exists inside
+Claude Code's own tool calls.
 
 ## 6. Coding standards
 
