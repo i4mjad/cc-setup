@@ -89,11 +89,16 @@ assigned by `/feature` at intake and is the traceability key.
   one section of the completion report, which `/feature` pre-creates; `/feature` is the sole writer of
   `review.md`.
 - **SIMPLE wins.** Over-engineering to satisfy a principle is a review finding, not a virtue.
-- **Worktree isolation is automatic.** `/feature` creates `.worktrees/<slug>` off `develop` at Setup and
-  merges it back (`--no-ff`, conflicts resolved) once the initiative ships green, then removes the
-  worktree and branch — see `CLAUDE.md` §9. This is what makes concurrent `/feature` sessions on the
-  same repo safe. A `NOT SHIPPABLE` result at the loop cap skips the merge and leaves the worktree for
-  the next session to resume from.
+- **Worktree isolation is automatic, but `CLAUDE.md` §9 outranks it.** By default `/feature` creates
+  `.worktrees/<slug>` off `develop` at Setup and merges it back (`--no-ff`, conflicts resolved) once the
+  initiative ships green, then removes the worktree and branch. This is what makes concurrent `/feature`
+  sessions on the same repo safe. A `NOT SHIPPABLE` result at the loop cap skips the merge and leaves
+  the worktree for the next session to resume from.
+  **That default applies only where §9 hasn't replaced it.** §9 is the project's git policy, not a copy
+  of the plugin's — a project that uses a different granularity (one worktree per edit), base branch,
+  merge target, or requires review before merge writes that in §9, and `/feature` follows §9 instead.
+  If §9 and this default conflict, §9 wins; if they can't be reconciled, `/feature` asks rather than
+  picking.
 
 ## Enforcement & known limits
 

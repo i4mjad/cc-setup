@@ -183,6 +183,15 @@ still carrying the spine.
 
 ## 9. Parallel sessions (git worktrees)
 
+> **This section is the authority on this project's git policy, and you may replace it wholesale.**
+> What follows is the shipped default, not a requirement. If this project already has its own worktree,
+> branching, or merge convention — a different granularity (one worktree per *edit* rather than per
+> initiative), a different base or merge target, or a review requirement before merge — **write that
+> here instead**, and `/feature` follows it. A project's own git policy beats the plugin's default;
+> `/feature` is told not to impose the convention below over whatever this section says, and to ask
+> rather than guess if the two can't be reconciled. `/initialize --sync` will not silently overwrite a
+> §9 you have customized.
+
 `/feature` isolates **every** initiative in its own git worktree automatically, not just when you
 remember to ask for it — this is what makes running more than one `/feature` session against this repo
 at the same time safe by default; without it, concurrent sessions would stomp each other's uncommitted

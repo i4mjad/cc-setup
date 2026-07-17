@@ -33,9 +33,21 @@ Here is the current starter governance template:
    everything else and do only this:
    - If CLAUDE.md is MISSING, say so and stop — there is nothing to sync; tell the user to run
      `/initialize` with no arguments first.
-   - Read the project's `./CLAUDE.md`. Replace **only** its §2, §3, §6, §7, §8, and §9 with those
-     sections from the template above. Preserve §1, §4, and §5 **byte-for-byte** — they hold this
-     project's interviewed purpose, domain, and stack, and are not yours to touch.
+   - **First, check the file is actually template-derived** — i.e. it still has the numbered sections
+     this command swaps (§2, §3, §6–§9) in recognizable template form. Many real projects' CLAUDE.md
+     files are hand-written with their own structure and section names; **section swapping does not
+     apply to those, and you must not force it.** If the file isn't template-derived, say so plainly
+     and switch to **report-only mode**: list what the plugin's pipeline now says that this file
+     doesn't (new agents, gates, artifacts, spine, loop policy), as a short delta the user can
+     hand-merge, and **change nothing**. That is a successful `--sync` on a divergent file, not a
+     failure — say which parts look like deliberate customization rather than drift, and never
+     recommend a full overwrite of a file whose structure someone clearly authored on purpose.
+   - Otherwise, read the project's `./CLAUDE.md` and replace **only** its §2, §3, §6, §7, §8, and §9
+     with those sections from the template above. Preserve §1, §4, and §5 **byte-for-byte** — they hold
+     this project's interviewed purpose, domain, and stack, and are not yours to touch.
+   - **§9 is the project's git policy, not the plugin's.** If its §9 states a worktree/branch/merge
+     convention that differs from the template's default, that is a deliberate choice — leave it alone
+     and report it as kept. Never replace a customized §9 with the shipped default.
    - `<PROJECT_NAME>` and any other placeholder inside the plugin-owned sections you just wrote must
      be filled from the project's existing §1/§4/§5 — never reintroduce a `<PLACEHOLDER>` into a file
      that was already configured.

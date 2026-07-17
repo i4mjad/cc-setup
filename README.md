@@ -52,6 +52,14 @@ custom). It records that in `CLAUDE.md §5`, which decides exactly which build a
 `CLAUDE.md` (§2/§3/§6–§9), preserves your §1/§4/§5 verbatim, and reports what changed. Use it after
 every `claude plugin update`.
 
+> **`--sync` only rewrites files that are still template-derived.** If your project's `CLAUDE.md` was
+> hand-written or restructured — its own section names, its own agent names, its own git policy — there
+> are no template sections to swap, and `--sync` switches to **report-only**: it prints the delta
+> between the current pipeline and your file for you to hand-merge, and changes nothing. That's the
+> intended outcome, not a failure; a file someone deliberately authored isn't drift. `--sync` also
+> leaves a customized **§9** alone in every case — §9 is your git policy and outranks the plugin's
+> default (see below).
+
 **3. Install the skills your stack needs (once per project):**
 
 ```
@@ -125,9 +133,11 @@ discovery ─[GATE]─▶ business-analyst ─[GATE]─▶ product-manager ─[G
 - **Backward handoffs** expected when upstream is wrong/ambiguous (architect → PM → BA → discovery;
   designer → PM).
 - **Escalate-on-ambiguity**: downstream agents stop and ask rather than guess.
-- **Worktree isolation**: `/feature` runs every initiative in its own git worktree off `develop` and
-  merges it back automatically once it ships green — safe to run more than one `/feature` session on
-  this repo at a time (`CLAUDE.md §9`).
+- **Worktree isolation**: by default `/feature` runs every initiative in its own git worktree off
+  `develop` and merges it back automatically once it ships green — safe to run more than one `/feature`
+  session on this repo at a time. This is a **default, not a mandate**: `CLAUDE.md §9` is the project's
+  git policy and outranks it, so a repo with its own worktree/branch/merge convention writes it there
+  and `/feature` follows that instead.
 
 ## Stack skills
 
