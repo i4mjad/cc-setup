@@ -67,7 +67,10 @@ Install if missing: `bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh discovery`.
 ## Handoffs
 - Forward → business-analyst on **GO** or **PIVOT**, and **only after the user approves the verdict**
   (the orchestrator enforces this gate). It consumes only your **Handoff to BA** section.
-- On **KILL**, hand nothing forward. Return the verdict to the orchestrator, which stops the pipeline.
+- On **KILL**, hand nothing forward: the Handoff section says "None — this is a KILL", and you return
+  the verdict to the orchestrator, which stops the pipeline. Naming a *different* idea underneath the
+  dead one is fine — but say it needs its own discovery; that is not this idea surviving in another
+  form, and writing it as one is the "maybe later" softening in disguise.
 - Backward → none (you are first). You may ask the user anything.
 - Escalate rather than assume: a decision that needs confirmation is a question, not a guess.
 

@@ -7,6 +7,11 @@
 
 > The decision record for whether this idea should exist. Only §8 (Handoff to BA) crosses the gate —
 > everything above it is the user's evidence trail, not a requirements input.
+>
+> **Keep it short enough to read at the gate** (CLAUDE.md §8) — one row per finding that could change
+> the verdict, and none that couldn't. A risk with nothing to say gets one line saying so, not a
+> paragraph explaining why it has nothing to say. Length is not thoroughness; a verdict nobody reads
+> is a gate nobody holds.
 
 Every claim below is tagged `[EVIDENCE]` (observed, sourced), `[ASSUMPTION]` (believed, untested —
 must name its cheapest test), or `[USER-CONVICTION]` (the user's call, recorded as such). A GO may
@@ -55,12 +60,21 @@ not rest on `[USER-CONVICTION]` alone for value risk.
 ## 7. Kill criteria
 > Falsifiable, with numbers and a deadline. "If fewer than X of Y do Z within T, stop."
 > Vague criteria are a failure — rewrite until falsifiable.
+>
+> On a **KILL**, kill criteria do not apply — they guard a GO. State instead which findings, if any,
+> could ever reopen this, and name the ones that no amount of demand unblocks (a legal or ethical
+> bar is not a threshold). If nothing could reopen it, say that.
 
 - <e.g. "If fewer than 8 of 30 interviewed users describe this problem unprompted by 2026-08-15, stop.">
 
 ## 8. Handoff to BA
-> **GO / PIVOT only** — on KILL, delete this section and hand nothing forward. This is the *only*
-> section the business-analyst reads.
+> This is the *only* section the business-analyst reads.
+>
+> On a **KILL**, do not delete this section — an absent section is ambiguous (forgotten, or dead?).
+> Keep the heading and write exactly one thing: **"None — this is a KILL. Nothing is handed forward
+> and the pipeline stops here."** Then state plainly what is dead and on which risk, so the record
+> can't be re-read later as a deferral. If a *different* idea sits underneath this one, say that it is
+> a new idea needing its own discovery — not this one surviving in another form.
 
 - **Validated problem statement:** <the problem, as evidence supports it — not the solution>
 - **Scope boundary for v1:** <what the smallest value-testing version must cover>
