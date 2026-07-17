@@ -1,10 +1,11 @@
 # cc-setup
 
-A reusable **Claude Code plugin**: a **requirements → design → build → verify** agent team plus a
-stack-aware skill set. Eleven specialist agents run a single pipeline, orchestrated by the **`/feature`**
-skill, that takes a raw brief all the way to reviewed, verified code — stopping at human approval gates
-along the way. The build agents are **platform-scoped**, so a web-only app and a web + iOS + Flutter app
-each get exactly the agents they need.
+A reusable **Claude Code plugin**: a **discovery → design → build → verify** agent team plus a
+stack-aware skill set. Twelve specialist agents run a single pipeline, orchestrated by the **`/feature`**
+skill, that takes a raw idea all the way to reviewed, verified code — stopping at human approval gates
+along the way. It opens by asking whether the idea should be built at all, and can tell you no. The
+build agents are **platform-scoped**, so a web-only app and a web + iOS + Flutter app each get exactly
+the agents they need.
 
 Install it once and it's available in **every** project — no copy-paste. The plugin's own files
 (agents, commands, hooks, templates) update via `claude plugin update`; the third-party stack/role
@@ -27,6 +28,15 @@ Then **restart Claude Code** so the agents, `/initialize`, and `/feature` load.
 To update later: `claude plugin update cc-setup@cc-setup`. To develop locally, point the marketplace at
 a checkout instead: `claude plugin marketplace add /path/to/cc-setup`.
 
+> **After a plugin update, run `/initialize --sync` in each existing project.** The agents, `/feature`,
+> and the templates update themselves — but your project's own `CLAUDE.md` does not, because
+> `/initialize` never overwrites it. Its §2/§3/§6–§9 are plugin-owned boilerplate (pipeline, folder
+> conventions, standards, traceability, worktrees) and go stale on a pipeline change, while §1/§4/§5
+> hold your interviewed purpose/domain/stack. `--sync` refreshes the former and leaves the latter
+> untouched. Skipping it leaves your governance file describing a pipeline the plugin no longer runs —
+> and every agent reads that file first. **Upgrading from 0.8.x specifically:** your §2 still starts at
+> business-analyst with a stale agent count, and has no discovery stage and no KILL gate.
+
 **2. Scaffold a project (once per project):**
 
 ```
@@ -37,6 +47,10 @@ a checkout instead: `claude plugin marketplace add /path/to/cc-setup`.
 full-stack + mobile, which mobile (iOS / Flutter / both), and which backend (.NET / Supabase / Firebase /
 custom). It records that in `CLAUDE.md §5`, which decides exactly which build agents `/feature` dispatches.
 (Named `initialize`, not `init`, to avoid clashing with Claude Code's built-in `/init`.)
+
+`/initialize --sync` is the re-run: it refreshes only the plugin-owned pipeline sections of an existing
+`CLAUDE.md` (§2/§3/§6–§9), preserves your §1/§4/§5 verbatim, and reports what changed. Use it after
+every `claude plugin update`.
 
 **3. Install the skills your stack needs (once per project):**
 
@@ -64,11 +78,12 @@ Only `CLAUDE.md` is written into your project — everything else lives in the p
 > and choose **github** (install & authenticate the `gh` CLI: `gh auth login`), **gitlab**, or
 > **local markdown**. Linear isn't supported upstream. Skip this and the agent just uses `/grill-me`.
 
-## The 11 agents
+## The 12 agents
 
 | Agent | Role |
 |---|---|
-| **business-analyst** | Raw brief → solution-agnostic business-requirements doc. Interviews you on blocking gaps. |
+| **discovery** | Raw idea → Discovery Brief with a **GO / PIVOT / KILL** verdict. Challenges value → viability → usability → feasibility, in that order, and stops the pipeline on a KILL. |
+| **business-analyst** | Validated idea → solution-agnostic business-requirements doc. Interviews you on blocking gaps. |
 | **product-manager** | Business requirements → product spec (MoSCoW scope, v1 vs deferred, Gherkin AC). Answers "what," never "how." |
 | **architect** | Product spec → technical decisions + owner-tagged build tasks (`owner: frontend\|ios\|flutter\|backend`). |
 | **designer** | Architecture → `design.md`, a platform-aware design contract the client agents implement to. Runs only for UI initiatives. |
@@ -87,19 +102,28 @@ fixes, loops, and stops at the human gates. (No separate conductor agent.)
 ## Flow
 
 ```
-business-analyst ─[GATE]─▶ product-manager ─[GATE]─▶ architect ─▶ designer ─[GATE, if UI]─▶
+discovery ─[GATE]─▶ business-analyst ─[GATE]─▶ product-manager ─[GATE]─▶ architect ─▶ designer ─[GATE, if UI]─▶
    frontend / ios / flutter + backend (only the platforms in §5, parallel) ─▶ completion-report
       ─▶ code-reviewer + qa-tester + api-tester (parallel)
          ─▶ /feature consolidates review, routes fixes ─▶ the tagged build agent
             ─▶ loop ≤ 3 rounds, then report to the user
+
+   discovery returns KILL ─▶ pipeline stops; nothing reaches the business-analyst
 ```
 
-- **Human gates**: after business-analyst, after product-manager, and after designer (UI only).
-- **Large scope auto-phases**: at intake `/feature` sizes up the brief on its own — if it's too big for
-  one pass (e.g. a new project from scratch), it proposes an ordered set of shippable **phases**
-  (`<project>-phase-N-<name>`), gets your approval, then runs the whole flow once per phase. You don't
-  have to ask for this; routine features stay a single phase.
-- **Backward handoffs** expected when upstream is wrong/ambiguous (architect → PM → BA; designer → PM).
+- **Human gates**: after discovery, after business-analyst, after product-manager, and after designer
+  (UI only).
+- **Discovery can say no.** Every initiative starts there, and a **KILL** stops the pipeline — only you
+  can overrule it. On GO/PIVOT only the brief's *Handoff to BA* section crosses the gate, and its
+  out-of-scope cuts bind everything downstream. It reads your `CLAUDE.md` §4/§5 for the market,
+  compliance, and stack a GO has to survive.
+- **Large scope auto-phases**: after discovery, `/feature` sizes up what the v1 boundary left on its own
+  — if it's too big for one pass (e.g. a new project from scratch), it proposes an ordered set of
+  shippable **phases** (`<project>-phase-N-<name>`), gets your approval, then runs the rest of the flow
+  once per phase. You don't have to ask for this; routine features stay a single phase. Discovery isn't
+  re-run per phase.
+- **Backward handoffs** expected when upstream is wrong/ambiguous (architect → PM → BA → discovery;
+  designer → PM).
 - **Escalate-on-ambiguity**: downstream agents stop and ask rather than guess.
 - **Worktree isolation**: `/feature` runs every initiative in its own git worktree off `develop` and
   merges it back automatically once it ships green — safe to run more than one `/feature` session on
@@ -125,6 +149,7 @@ Always-on per pipeline agent (the `roles` section):
 
 | Agent | Role skill | Source |
 |---|---|---|
+| discovery | `/grill-me` | mattpocock/skills (454K) |
 | business-analyst | `/grill-me`, `/wayfinder`¹ | mattpocock/skills (454K) |
 | product-manager | `/to-prd`, `/to-issues` | mattpocock/skills |
 | architect | `/architecture-designer` | jeffallan/claude-skills |
@@ -183,7 +208,7 @@ this: `--update` assumes every `plugin`-kind entry under that key is already ins
 
 ```
 .claude-plugin/{marketplace,plugin}.json   # marketplace + plugin manifests
-agents/*.md                                # the 11 specialist agents (auto-discovered)
+agents/*.md                                # the 12 specialist agents (auto-discovered)
 skills/feature/SKILL.md                    # the /feature pipeline orchestrator
 commands/initialize.md                     # the /initialize project scaffolder
 hooks/                                     # PreToolUse guard enforcing the write boundaries

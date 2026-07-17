@@ -79,6 +79,15 @@
     ]
   },
   "roles": {
+    "discovery": [
+      {
+        "name": "grill-me",
+        "kind": "skills-cli",
+        "ref": "mattpocock/skills@grill-me",
+        "invoke": "/grill-me",
+        "note": "Same ref the business-analyst uses — a project that already ran `/bootstrap roles` has it installed."
+      }
+    ],
     "business-analyst": [
       {
         "name": "grill-me",

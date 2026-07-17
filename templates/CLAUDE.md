@@ -14,19 +14,19 @@ repo is currently greenfield — no apps exist yet" or "Apps live under `apps/` 
 
 ## 2. The agent team & pipeline
 
-11 specialist agents run a requirements → build → verify pipeline, orchestrated by the
+12 specialist agents run a discovery → build → verify pipeline, orchestrated by the
 **`/feature`** skill (run by the main thread — there is no conductor agent). The **build agents are
 platform-scoped**: `frontend` (web), `ios`, `flutter`, and an adaptive `backend` — `/feature`
 dispatches only the ones whose platform is set in §5.
 
 ```
-      ┌── gate ──┐   ┌── gate ──┐              ┌── gate, if UI ──┐
-business-analyst ▶ product-manager ▶ architect ▶ designer ▶ frontend ┐
-                                                           ios       │
-                                                           flutter   ├─▶ completion-report
-                                                           backend   ┘        │
-                                        ┌── code-reviewer ──┐                 │
-                                        ├── qa-tester ──────┤◀────────────────┘
+  ┌── gate ──┐  ┌── gate ──┐   ┌── gate ──┐              ┌── gate, if UI ──┐
+discovery ▶ business-analyst ▶ product-manager ▶ architect ▶ designer ▶ frontend ┐
+   │                                                                   ios       │
+   │                                                                   flutter   ├─▶ completion-report
+   └── KILL ─▶ pipeline stops                                          backend   ┘        │
+                                        ┌── code-reviewer ──┐                            │
+                                        ├── qa-tester ──────┤◀───────────────────────────┘
                                         └── api-tester ─────┘
                                                 │ (findings → /feature → review.md)
                                                 ▼
@@ -34,6 +34,12 @@ business-analyst ▶ product-manager ▶ architect ▶ designer ▶ frontend ┐
                                                 │
                                      auto-loop ≤ 3 rounds, then report to user
 ```
+
+**Discovery runs first, on every initiative.** It challenges the idea against value → viability →
+usability → feasibility risk (in that order) and returns **GO / PIVOT / KILL** with falsifiable kill
+criteria. A KILL stops the pipeline — only you can overrule it. On GO/PIVOT, only the brief's
+**Handoff to BA** section crosses the gate, and its out-of-scope cuts are binding on everything
+downstream.
 
 - **`/feature`** orchestrates (the main thread, not a subagent): assigns the initiative `<slug>`,
   invokes each agent in order, runs the **present** client agents (frontend/ios/flutter) + backend in
@@ -46,7 +52,8 @@ business-analyst ▶ product-manager ▶ architect ▶ designer ▶ frontend ┐
 | Handoff | Type |
 |---|---|
 | bootstrap intake interview → pipeline (new project only) | **HUMAN GATE** — stop for user approval of the filled §4/§5 defaults |
-| intake scope check → phase plan (large scope only) | **HUMAN GATE** — stop for approval of the proposed phases (auto-proposed, not user-requested) |
+| discovery → business-analyst | **HUMAN GATE** — stop for user approval of the GO/PIVOT verdict; a **KILL stops the pipeline** |
+| scope check → phase plan (large scope only) | **HUMAN GATE** — stop for approval of the proposed phases (auto-proposed, not user-requested) |
 | business-analyst → product-manager | **HUMAN GATE** — stop for user approval |
 | product-manager → architect | **HUMAN GATE** — stop for user approval |
 | architect → designer (only if the initiative has UI) | automatic |
@@ -57,7 +64,7 @@ business-analyst ▶ product-manager ▶ architect ▶ designer ▶ frontend ┐
 
 **Backward handoffs** are allowed and expected when work upstream is wrong/ambiguous:
 architect → product-manager, designer → product-manager, product-manager → business-analyst,
-reviewers → frontend/ios/flutter/backend.
+business-analyst → discovery, reviewers → frontend/ios/flutter/backend.
 
 **Escalate-on-ambiguity rule:** the architect (and any downstream agent) does **not** invent answers
 to fill a real gap. When a decision needs *confirmation rather than an assumption*, it stops and asks
@@ -74,7 +81,7 @@ safe without you having to opt in.
 
 ## 3. Folder & naming conventions
 
-The pipeline machinery — the 11 agents, the `/feature` skill, the `/initialize` command, the stack-skill
+The pipeline machinery — the 12 agents, the `/feature` skill, the `/initialize` command, the stack-skill
 manifest, `bootstrap.sh`, and the artifact templates — is provided by the **cc-setup plugin** and is
 never copied here (agents reference it via `${CLAUDE_PLUGIN_ROOT}`). This project only holds this
 `CLAUDE.md` and the artifacts the pipeline writes:
@@ -82,6 +89,7 @@ never copied here (agents reference it via `${CLAUDE_PLUGIN_ROOT}`). This projec
 ```
 CLAUDE.md                         # this file (the only per-project config)
 docs/
+  discovery/<slug>.md                       # GO/PIVOT/KILL verdict + kill criteria
   requirements/<slug>-business-requirements.md
   product/<slug>-product-spec.md
   architecture/<slug>/spec.md
@@ -154,16 +162,19 @@ commit as they go; `/feature` never squashes these into a single end-of-task com
 ## 7. Traceability spine (must be preserved end to end)
 
 ```
-business outcome (BR)
-   → product story + Gherkin acceptance criterion (product spec)
-      → architect task (owner-tagged)
-         → implementation (code + completion-report)
-            → qa / api verification against that exact criterion (review)
+validated risk + v1 boundary (discovery brief, VR-n)
+   → business outcome (BR)
+      → product story + Gherkin acceptance criterion (product spec)
+         → architect task (owner-tagged)
+            → implementation (code + completion-report)
+               → qa / api verification against that exact criterion (review)
 ```
 
-Every artifact references the one above it: tasks cite the story/AC they satisfy; the completion
-report cites the tasks; the review cites the AC each finding maps to. If you cannot trace a piece of
-work back to a business outcome, that is a signal to hand backward, not to proceed.
+Every artifact references the one above it: requirements cite the validated problem discovery handed
+over; tasks cite the story/AC they satisfy; the completion report cites the tasks; the review cites the
+AC each finding maps to. If you cannot trace a piece of work back to a business outcome — and that
+outcome back to a risk discovery actually validated — that is a signal to hand backward, not to
+proceed. Work that traces to nothing discovery validated is scope that crept in past the gate.
 
 ## 8. Apply YAGNI to the team itself
 

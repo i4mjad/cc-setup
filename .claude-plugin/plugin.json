@@ -1,12 +1,12 @@
 {
   "name": "cc-setup",
-  "version": "0.8.2",
-  "description": "Requirements→build→verify agent team (11 specialists) orchestrated by the /feature skill, with an /initialize project scaffolder and a stack-keyed specialist skill set (e.g. /dotnet-clean-arch for .NET backends).",
+  "version": "0.9.0",
+  "description": "Discovery→build→verify agent team (12 specialists) orchestrated by the /feature skill, with an /initialize project scaffolder and a stack-keyed specialist skill set (e.g. /dotnet-clean-arch for .NET backends).",
   "author": {
     "name": "i4mjad",
     "url": "https://github.com/i4mjad"
   },
   "repository": "https://github.com/i4mjad/cc-setup",
   "license": "MIT",
-  "keywords": ["pipeline", "agents", "requirements", "product-spec", "architecture", "code-review", "qa", "scaffold", "clean-architecture"]
+  "keywords": ["pipeline", "agents", "discovery", "requirements", "product-spec", "architecture", "code-review", "qa", "scaffold", "clean-architecture"]
 }

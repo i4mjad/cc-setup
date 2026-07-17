@@ -22,18 +22,25 @@ grep -q "($count specialists)" .claude-plugin/plugin.json || err "plugin.json de
 grep -q "$count-agent" .claude-plugin/marketplace.json || err "marketplace.json description must say $count-agent"
 grep -q "The $count agents" README.md || err "README.md must have a 'The $count agents' section"
 grep -q "$count specialist agents" templates/CLAUDE.md || err "templates/CLAUDE.md must say '$count specialist agents'"
+grep -q "the $count agents" commands/initialize.md || err "commands/initialize.md must say 'the $count agents'"
 
 # 3. No leftovers from renames/splits
 if grep -q "/init " .claude-plugin/plugin.json; then err "plugin.json still references /init"; fi
 if grep -rq "cc-init" --include="*.md" --include="*.json" .; then err "stale /cc-init reference remains"; fi
 if grep -q "ios-swiftui" scripts/bootstrap.sh skills.manifest.json; then err "stale ios-swiftui key remains"; fi
 if grep -riq "eight-agent\|8 specialists" .claude-plugin/; then err "stale 8-agent count in manifests"; fi
-if grep -rq "two pipeline" skills/ docs/ templates/; then err "stale 'two pipeline gates' phrasing remains (there are three)"; fi
+if grep -rqi "eleven specialist\|11 specialist\|11-agent\|the 11 agents" --include="*.md" --include="*.json" .; then err "stale 11-agent count remains (discovery made it 12)"; fi
+if grep -rq "two pipeline" skills/ docs/ templates/; then err "stale 'two pipeline gates' phrasing remains (there are four)"; fi
+if grep -rq "three pipeline\|Three pipeline" skills/ docs/ templates/ README.md; then err "stale 'three pipeline gates' phrasing remains (there are four)"; fi
+if grep -rq "first in the pipeline" agents/business-analyst.md; then err "business-analyst still claims to be first — discovery precedes it"; fi
+# Inserting an agent shifts every downstream ordinal; two agents claiming one slot means one was missed.
+dupe_pos="$(grep -ho "You are [a-z]* in the pipeline" agents/*.md | sort | uniq -d || true)"
+[ -z "$dupe_pos" ] || err "two agents claim the same pipeline position: $dupe_pos"
 if grep -rq "Both completion-report" skills/; then err "stale two-builder phrasing in SKILL.md"; fi
 if grep -rqF "(\`frontend\` or \`backend\`)" agents/; then err "reviewer owner vocabulary missing ios/flutter"; fi
 
 # 4. Every pipeline artifact stage has a template
-for t in business-requirements product-spec architecture-spec task design review completion-report; do
+for t in discovery business-requirements product-spec architecture-spec task design review completion-report; do
   [ -f "docs/_templates/$t.template.md" ] || err "missing docs/_templates/$t.template.md"
 done
 
@@ -54,7 +61,7 @@ fi
 for key in $(jq -r '.roles | keys[]' skills.manifest.json); do
   [ -f "agents/$key.md" ] || err "manifest roles key '$key' has no matching agents/$key.md"
 done
-for role in code-reviewer qa-tester api-tester business-analyst product-manager architect designer; do
+for role in code-reviewer qa-tester api-tester discovery business-analyst product-manager architect designer; do
   grep -q "$role" hooks/guard-writes.sh || err "guard-writes.sh missing case arm for $role"
   [ -f "agents/$role.md" ] || err "guard-writes.sh references nonexistent agent $role"
 done

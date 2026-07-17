@@ -9,32 +9,42 @@ the plugin's `agents/` for each agent's contract.
 ```
   ┌──── HUMAN GATE (new project) ────┐
   bootstrap interview → fills CLAUDE.md §4/§5 ──▶ (skipped if already configured)
-        ┌── GATE ──┐   ┌── GATE ──┐              ┌── GATE, if UI ──┐
-business-analyst ─▶ product-manager ─▶ architect ─▶ designer ─▶ frontend ┐
-   (interviews)       (Gherkin AC)   (owner tags)  (design.md)  ios      │
-                                                                flutter  ├─▶ completion-report.md
-                                                                backend  ┘        │
-                                                                                  ▼
+   ┌── GATE ──┐  ┌── GATE ──┐   ┌── GATE ──┐              ┌── GATE, if UI ──┐
+discovery ─▶ business-analyst ─▶ product-manager ─▶ architect ─▶ designer ─▶ frontend ┐
+(GO/PIVOT/KILL)  (interviews)      (Gherkin AC)    (owner tags)  (design.md)  ios     │
+   │                                                                          flutter ├─▶ completion-report.md
+   └── KILL ──▶ pipeline stops; /feature reports the verdict                  backend ┘        │
+                                                                                               ▼
    /feature consolidates → review.md    ◀── code-reviewer ‖ qa-tester ‖ api-tester
-                                                                                  │
+                                                                                               │
               routed fixes ──▶ frontend / ios / flutter / backend ──▶ re-review
-                                                                                  │
+                                                                                               │
                               loop ≤ 3 rounds, then /feature reports to you
 ```
+
+**Discovery gates the whole pipeline.** Every initiative starts there: it steelmans the idea, then
+interrogates value → viability → usability → feasibility in that order and returns
+**GO / PIVOT / KILL** with falsifiable kill criteria. On KILL the pipeline stops — nothing reaches the
+business-analyst, and only you can overrule the verdict. On GO/PIVOT only the brief's **Handoff to BA**
+section crosses the gate; the rest is your decision record.
 
 Only the client agents whose platform is set in CLAUDE.md §5 run (web→frontend, iOS→ios,
 Flutter→flutter); `backend` adapts to the one backend platform. `designer` runs only for UI initiatives.
 
-**Large scope is phased by default.** At intake `/feature` sizes up the brief without being asked; if
-it's too big for one pass (typically a new project), it splits the work into an ordered set of
-shippable **phases** (`<project>-phase-N-<name>`), gets your approval at a **phase-plan gate**, then
-runs the pipeline above once per phase, shipping between them. A routine feature is a single phase.
+**Large scope is phased by default.** After discovery, `/feature` sizes up what the v1 boundary left
+without being asked; if it's too big for one pass (typically a new project), it splits the work into an
+ordered set of shippable **phases** (`<project>-phase-N-<name>`), gets your approval at a **phase-plan
+gate**, then runs the rest of the pipeline once per phase, shipping between them. A routine feature is
+a single phase. **Discovery is not re-run per phase** — a phase is an increment of an already-validated
+idea, not a new idea.
 
 ## Who hands to whom
 
 | From | To | Gate | Carries |
 |---|---|---|---|
 | bootstrap interview (new project) | pipeline | **HUMAN** | filled CLAUDE.md §4/§5 (domain + stack), approved |
+| discovery | business-analyst | **HUMAN** | `docs/discovery/<slug>.md` — GO/PIVOT approved; **Handoff to BA** section only |
+| discovery | — (pipeline stops) | **HUMAN** | a KILL verdict; nothing is handed forward |
 | business-analyst | product-manager | **HUMAN** | business-requirements.md (approved) |
 | product-manager | architect | **HUMAN** | product-spec.md (approved) |
 | architect | designer (if UI) | auto | spec.md + owner-tagged tasks |
@@ -43,13 +53,14 @@ runs the pipeline above once per phase, shipping between them. A routine feature
 | build agents | reviewers | auto | completion-report.md |
 | reviewers | `/feature` | auto | findings (owner + severity tagged) |
 | `/feature` | frontend / ios / flutter / backend | auto | routed fixes (+ the AC each maps to) |
-| **backward:** architect → PM, designer → PM, PM → BA, reviewer → build agent | — | auto | the ambiguity/defect |
+| **backward:** architect → PM, designer → PM, PM → BA, BA → discovery, reviewer → build agent | — | auto | the ambiguity/defect |
 | **escalation:** any agent → user | **HUMAN** | — | a decision needing confirmation, not a guess |
 
 ## Artifact paths (per initiative `<slug>`)
 
 | Stage | Artifact |
 |---|---|
+| Discovery | `docs/discovery/<slug>.md` |
 | Requirements | `docs/requirements/<slug>-business-requirements.md` |
 | Product | `docs/product/<slug>-product-spec.md` |
 | Architecture | `docs/architecture/<slug>/spec.md` + `tasks/NN-*.md` |
@@ -65,8 +76,10 @@ assigned by `/feature` at intake and is the traceability key.
 - **Bootstrap before anything** on a new project: if CLAUDE.md §4/§5 still hold `<PLACEHOLDER>`s,
   `/feature` interviews you to fill them and stops at a human gate. Never inherit domain/stack defaults
   from a prior project. Skipped once the project is configured.
-- **Three pipeline human gates** (BA→PM, PM→architect, designer→build for UI initiatives). Everything
-  else is automatic — except escalations.
+- **Four pipeline human gates** (discovery→BA, BA→PM, PM→architect, designer→build for UI
+  initiatives). Everything else is automatic — except escalations.
+- **A KILL is a real stop.** Discovery's job is to be the friction, and a fast honest no is its most
+  valuable output. `/feature` may not downgrade a KILL to "maybe later" — only you can overrule it.
 - **Escalate, don't assume.** When a decision needs confirmation, stop and ask the user.
 - **Backward handoffs are normal**, not failures — push ambiguity back to where it belongs.
 - **Green = zero open blockers and majors.** Minors may ship but are listed in the report.
@@ -100,5 +113,6 @@ assigned by `/feature` at intake and is the traceability key.
 `/feature <brief>` (the brief inline or a `thoughts.md` seed file). On a brand-new project it first
 runs the **bootstrap interview** to fill CLAUDE.md §4/§5 (domain + stack) and stops for your approval;
 on an already-configured project it skips that. Then it assigns a slug, creates that initiative's git
-worktree (`.worktrees/<slug>` off `develop`), runs the business-analyst (which interviews you on
-requirements), and stops at the first pipeline gate.
+worktree (`.worktrees/<slug>` off `develop`), runs **discovery** (which interrogates the idea and
+returns a GO/PIVOT/KILL verdict), and stops at the first pipeline gate. Expect discovery to push back —
+that is the point of it.

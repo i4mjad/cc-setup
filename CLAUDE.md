@@ -14,9 +14,11 @@ this file governs work on the plugin itself.
 - **Owner vocabulary is exactly** `frontend | ios | flutter | backend` — everywhere: agents,
   templates, SKILL.md. Adding/renaming a platform touches the architect, the builders, all three
   reviewers, both report templates, and the router in SKILL.md.
-- **Agent counts are written numerically** ("11 agents", "(11 specialists)", "11-agent") so
+- **Agent counts are written numerically** ("12 agents", "(12 specialists)", "12-agent") so
   validate.sh can check them against `agents/*.md`. Adding an agent means updating plugin.json,
-  marketplace.json, README, and templates/CLAUDE.md.
+  marketplace.json, README, templates/CLAUDE.md, and commands/initialize.md. Don't write a count as a
+  word ("Twelve") anywhere validate.sh greps — the spelled-out form in README's opening line is
+  prose, and must be updated by hand.
 - **Every artifact stage needs a template** in `docs/_templates/` named `<stage>.template.md`.
 - **Bump `plugin.json` version** on any behavior change (agents, SKILL.md, hooks, bootstrap).
 - **Third-party skill refs in `skills.manifest.json` are unpinned** — when touching them, verify the

@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/anthropics/claude-code/refs/heads/main/marketplace/marketplace.schema.json",
   "name": "cc-setup",
-  "description": "A reusable requirements→build→verify agent team plus a stack-aware skill set, driven by the /feature pipeline.",
+  "description": "A reusable discovery→build→verify agent team plus a stack-aware skill set, driven by the /feature pipeline.",
   "owner": {
     "name": "i4mjad",
     "url": "https://github.com/i4mjad"
@@ -9,10 +9,10 @@
   "plugins": [
     {
       "name": "cc-setup",
-      "description": "11-agent requirements→build→verify pipeline orchestrated by /feature, with an /initialize scaffolder and stack-keyed specialist skills.",
+      "description": "12-agent discovery→build→verify pipeline orchestrated by /feature, with an /initialize scaffolder and stack-keyed specialist skills.",
       "source": "./",
       "category": "workflow",
-      "keywords": ["pipeline", "agents", "requirements", "review", "scaffold", "clean-architecture"]
+      "keywords": ["pipeline", "agents", "discovery", "requirements", "review", "scaffold", "clean-architecture"]
     }
   ]
 }

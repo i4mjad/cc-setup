@@ -1,29 +1,57 @@
 ---
-description: Scaffold the cc-setup pipeline into this project — writes a starter CLAUDE.md, then interviews you to fill its domain/stack defaults. Run once per new project.
-argument-hint: (no arguments)
-allowed-tools: Bash(test:*), Read, Write, AskUserQuestion
+description: Scaffold the cc-setup pipeline into this project — writes a starter CLAUDE.md, then interviews you to fill its domain/stack defaults. Run once per new project; re-run with --sync after a plugin update to refresh the pipeline sections.
+argument-hint: [--sync]
+allowed-tools: Bash(test:*), Read, Write, Edit, AskUserQuestion
 ---
 
 <!--
 cc-setup init — materializes the ONE genuinely per-project file (CLAUDE.md). Everything else
-(the 11 agents, the /feature skill, the stack-skill manifest, bootstrap.sh, and the artifact
+(the 12 agents, the /feature skill, the stack-skill manifest, bootstrap.sh, and the artifact
 templates) lives in the plugin and is referenced by the agents via ${CLAUDE_PLUGIN_ROOT} — nothing
 else is copied into the project.
+
+CLAUDE.md is a split-ownership file, which is why --sync exists:
+  - PROJECT-OWNED: §1 (purpose), §4 (domain defaults), §5 (stack defaults) — interviewed for, unique
+    to this project, and NEVER touched by --sync.
+  - PLUGIN-OWNED: §2, §3, §6, §7, §8, §9 — the pipeline, folder conventions, coding standards,
+    traceability spine, and worktree policy. Generic boilerplate that ships from templates/CLAUDE.md.
+Without --sync, a plugin update silently leaves every existing project describing the OLD pipeline in
+its own governance file — which every agent reads first, and which then contradicts /feature.
 -->
+
+Arguments: $ARGUMENTS
 
 Does this project already have a CLAUDE.md? !`test -f CLAUDE.md && echo EXISTS || echo MISSING`
 
-Here is the starter governance template the project needs:
+Here is the current starter governance template:
 
 @${CLAUDE_PLUGIN_ROOT}/templates/CLAUDE.md
 
 **Do this:**
 
+0. **If `--sync` was passed:** this is a refresh of an existing project, not a scaffold. Skip
+   everything else and do only this:
+   - If CLAUDE.md is MISSING, say so and stop — there is nothing to sync; tell the user to run
+     `/initialize` with no arguments first.
+   - Read the project's `./CLAUDE.md`. Replace **only** its §2, §3, §6, §7, §8, and §9 with those
+     sections from the template above. Preserve §1, §4, and §5 **byte-for-byte** — they hold this
+     project's interviewed purpose, domain, and stack, and are not yours to touch.
+   - `<PROJECT_NAME>` and any other placeholder inside the plugin-owned sections you just wrote must
+     be filled from the project's existing §1/§4/§5 — never reintroduce a `<PLACEHOLDER>` into a file
+     that was already configured.
+   - **Report the diff in prose before finishing**: name what changed in the pipeline (e.g. "§2 now
+     has a discovery stage and a fourth human gate"). A silent rewrite of the file that governs every
+     agent is not acceptable — the user must know what their governance now says.
+   - If the project's §2/§3/§6–§9 were hand-edited away from the template, say so explicitly and ask
+     before overwriting; a deliberate local customization is not drift.
+   - Then stop. `--sync` never runs the interview and never runs the pipeline.
+
 1. **If CLAUDE.md is MISSING:** write the template above verbatim to `./CLAUDE.md`. It is the
    governance file every cc-setup agent reads.
 
-2. **If CLAUDE.md already EXISTS:** do NOT overwrite it. Report that it's already present. Only
-   continue to the interview if it still contains `<PLACEHOLDER>` markers.
+2. **If CLAUDE.md already EXISTS:** do NOT overwrite it. Report that it's already present, and
+   mention that `/initialize --sync` refreshes the plugin-owned pipeline sections if the plugin has
+   been updated since. Only continue to the interview if it still contains `<PLACEHOLDER>` markers.
 
 3. **Interview to fill the defaults.** Using `AskUserQuestion`, interview the user in one focused batch
    and write the answers into the new `./CLAUDE.md` §1 (purpose), §4 (domain defaults) and §5 (stack
