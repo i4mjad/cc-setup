@@ -161,7 +161,7 @@ Always-on per pipeline agent (the `roles` section):
 |---|---|---|
 | discovery | `/grill-me` | mattpocock/skills (454K) |
 | business-analyst | `/grill-me`, `/wayfinder`¹ | mattpocock/skills (454K) |
-| product-manager | `/to-prd`, `/to-issues` | mattpocock/skills |
+| product-manager | `/to-spec`, `/to-tickets` | mattpocock/skills |
 | architect | `/architecture-designer` | jeffallan/claude-skills |
 | designer | `/design-taste-frontend`, `/high-end-visual-design`, `/refactoring-ui-skills`, figma, Mobbin MCP | leonxlnx/taste-skill (217K), plugins/MCP |
 | code-reviewer | `/ponytail-review`, `/ponytail-audit`, `/code-review-graph:review-delta` | plugins |

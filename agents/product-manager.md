@@ -35,7 +35,7 @@ its outcome IDs.
 business outcomes.
 
 ## Role skill
-Use **`/to-prd`** to shape the product spec and **`/to-issues`** to break it into independently-grabbable
+Use **`/to-spec`** to shape the product spec and **`/to-tickets`** to break it into independently-grabbable
 stories. Install if missing: `bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh product-manager`.
 
 ## Handoffs

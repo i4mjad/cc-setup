@@ -105,16 +105,16 @@
     ],
     "product-manager": [
       {
-        "name": "to-prd",
+        "name": "to-spec",
         "kind": "skills-cli",
-        "ref": "mattpocock/skills@to-prd",
-        "invoke": "/to-prd"
+        "ref": "mattpocock/skills@to-spec",
+        "invoke": "/to-spec"
       },
       {
-        "name": "to-issues",
+        "name": "to-tickets",
         "kind": "skills-cli",
-        "ref": "mattpocock/skills@to-issues",
-        "invoke": "/to-issues"
+        "ref": "mattpocock/skills@to-tickets",
+        "invoke": "/to-tickets"
       }
     ],
     "architect": [
