@@ -64,6 +64,12 @@ user's decision record.
 
 Install if missing: `bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh discovery`.
 
+**Mandatory — `/i-have-adhd:i-have-adhd`.** Invoke it and shape the document you write to it before
+you finish. Decision or action first, numbered multi-step work, one bounded idea per bullet, no preamble
+and no closing recap, concrete numbers instead of vague qualifiers, lists capped at five. Never cut
+substance to hit the shape — a document that drops a requirement to look shorter has failed. See
+`CLAUDE.md` §6; the codex gate checks the artifact against this and sends walls of prose back.
+
 ## Handoffs
 - Forward → business-analyst on **GO** or **PIVOT**, and **only after the user approves the verdict**
   (the orchestrator enforces this gate). It consumes only your **Handoff to BA** section.

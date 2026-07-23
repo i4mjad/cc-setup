@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Codex's response to a peer's challenge of its findings. One entry per disputed finding. OpenAI structured outputs requires EVERY property to be listed in `required`, so the revise-only fields are nullable rather than optional — send null when position is not `revise`. Do not add minItems/minLength here; they are rejected.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["responses"],
+  "properties": {
+    "responses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "position", "reasoning", "revised_severity", "revised_recommendation"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The finding id being responded to."
+          },
+          "position": {
+            "type": "string",
+            "enum": ["concede", "hold", "revise"],
+            "description": "concede = the challenge is correct, withdraw the finding. hold = the finding stands as written. revise = the finding is real but the severity or the recommendation was wrong."
+          },
+          "reasoning": {
+            "type": "string",
+            "description": "Why. Engage with the specific evidence the challenger cited; do not restate the original finding."
+          },
+          "revised_severity": {
+            "type": ["string", "null"],
+            "enum": ["blocker", "major", "minor", null],
+            "description": "Set when position is revise. null otherwise."
+          },
+          "revised_recommendation": {
+            "type": ["string", "null"],
+            "description": "Set when position is revise and the fix changed. null otherwise."
+          }
+        }
+      }
+    }
+  }
+}

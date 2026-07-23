@@ -1,9 +1,10 @@
 # cc-setup
 
 A reusable **Claude Code plugin**: a **discovery → design → build → verify** agent team plus a
-stack-aware skill set. Twelve specialist agents run a single pipeline, orchestrated by the **`/feature`**
-skill, that takes a raw idea all the way to reviewed, verified code — stopping at human approval gates
-along the way. It opens by asking whether the idea should be built at all, and can tell you no. The
+stack-aware skill set. Thirteen specialist agents run a single pipeline, orchestrated by the **`/feature`**
+skill, that takes a raw idea all the way to reviewed, verified code. **Claude does the work, Codex
+reviews it, and Claude challenges that review** — the four spec approvals are peer-reviewed rather than
+waiting on you. It opens by asking whether the idea should be built at all, and can tell you no. The
 build agents are **platform-scoped**, so a web-only app and a web + iOS + Flutter app each get exactly
 the agents they need.
 
@@ -36,6 +37,23 @@ a checkout instead: `claude plugin marketplace add /path/to/cc-setup`.
 > untouched. Skipping it leaves your governance file describing a pipeline the plugin no longer runs —
 > and every agent reads that file first. **Upgrading from 0.8.x specifically:** your §2 still starts at
 > business-analyst with a stale agent count, and has no discovery stage and no KILL gate.
+
+> **Upgrading to 0.10.0 (codex gates) — `--sync` alone is not enough.** This release moves the four
+> spec approvals from you to Codex and makes `/i-have-adhd:i-have-adhd` mandatory for every document
+> artifact. Three extra steps per project, ~3 minutes:
+>
+> 1. `/bootstrap roles` — installs the `i-have-adhd` plugin and the Codex plugin. Without the first,
+>    the doc agents cannot invoke the skill their instructions now require.
+> 2. Make sure `codex` works: `codex login status`, then `echo hi | codex exec --sandbox read-only -`.
+>    A stale CLI against a newer configured model authenticates fine and fails on first review. Fix with
+>    `codex update`. **Until it works, all four gates fall back to human** — the pipeline still runs, it
+>    just waits on you, exactly as it did in 0.9.x.
+> 3. `/initialize --sync` — rewrites §2 (gate table + pipeline diagram) and §6 (the artifact writing
+>    standard). Skip it and your `CLAUDE.md` still tells every agent to stop for your approval at four
+>    gates that no longer stop.
+>
+> Nothing breaks if you do none of this: gates degrade to human, and the agents skip a skill they can't
+> find. You just get 0.9.x behavior from a 0.10.0 plugin.
 
 **2. Scaffold a project (once per project):**
 
@@ -86,7 +104,7 @@ Only `CLAUDE.md` is written into your project — everything else lives in the p
 > and choose **github** (install & authenticate the `gh` CLI: `gh auth login`), **gitlab**, or
 > **local markdown**. Linear isn't supported upstream. Skip this and the agent just uses `/grill-me`.
 
-## The 12 agents
+## The 13 agents
 
 | Agent | Role |
 |---|---|
@@ -102,25 +120,27 @@ Only `CLAUDE.md` is written into your project — everything else lives in the p
 | **code-reviewer** | Reviews for clean / SOLID / DRY / YAGNI code that stays SIMPLE. Findings only. |
 | **qa-tester** | Browser-tests against the Gherkin AC via the Playwright MCP. |
 | **api-tester** | Exercises endpoints — scenarios, error handling, validation, auth. |
+| **codex-reviewer** | Runs an independent Codex (GPT) review, then challenges it as a peer. Gates the four spec artifacts and adversarially reviews the code. |
 
 The pipeline itself is the **`/feature`** skill (main thread) — it assigns the slug, invokes each agent
 in order, runs the **present** client agents + backend in parallel, consolidates the review, routes
-fixes, loops, and stops at the human gates. (No separate conductor agent.)
+fixes, loops, and stops at the two human gates. (No separate conductor agent.)
 
 ## Flow
 
 ```
-discovery ─[GATE]─▶ business-analyst ─[GATE]─▶ product-manager ─[GATE]─▶ architect ─▶ designer ─[GATE, if UI]─▶
+discovery ─[CODEX]─▶ business-analyst ─[CODEX]─▶ product-manager ─[CODEX]─▶ architect ─▶ designer ─[CODEX, if UI]─▶
    frontend / ios / flutter + backend (only the platforms in §5, parallel) ─▶ completion-report
-      ─▶ code-reviewer + qa-tester + api-tester (parallel)
+      ─▶ code-reviewer + qa-tester + api-tester + codex-reviewer (parallel)
          ─▶ /feature consolidates review, routes fixes ─▶ the tagged build agent
             ─▶ loop ≤ 3 rounds, then report to the user
 
    discovery returns KILL ─▶ pipeline stops; nothing reaches the business-analyst
 ```
 
-- **Human gates**: after discovery, after business-analyst, after product-manager, and after designer
-  (UI only).
+- **Codex gates, not human ones.** The four spec approvals are made by Codex (GPT) reviewing the
+  artifact, with Claude challenging every finding as a peer — see *Peer review* below. **Two human
+  gates remain**: the bootstrap interview (your domain and stack) and the phase plan.
 - **Discovery can say no.** Every initiative starts there, and a **KILL** stops the pipeline — only you
   can overrule it. On GO/PIVOT only the brief's *Handoff to BA* section crosses the gate, and its
   out-of-scope cuts bind everything downstream. It reads your `CLAUDE.md` §4/§5 for the market,
@@ -138,6 +158,45 @@ discovery ─[GATE]─▶ business-analyst ─[GATE]─▶ product-manager ─[G
   session on this repo at a time. This is a **default, not a mandate**: `CLAUDE.md §9` is the project's
   git policy and outranks it, so a repo with its own worktree/branch/merge convention writes it there
   and `/feature` follows that instead.
+
+## Peer review — Codex reviews, Claude challenges
+
+Claude does the work. **Codex reviews it. Claude challenges that review.** Senior to senior — neither
+model defers to the other, and neither wins by default.
+
+At each of the four spec gates, and again at Verify against the code:
+
+1. **Codex reviews independently.** `codex exec` runs against a stage rubric (`prompts/*-gate.md`) or
+   an adversarial code brief, returning schema-validated findings with severity and location.
+2. **Claude challenges every finding.** The `codex-reviewer` agent reads the actual artifact or code and
+   marks each one **agree** or **dispute** — and a dispute needs a citation, the artifact line or
+   `path:line` that defeats it. "I disagree" without evidence is not a dispute; it becomes an agree.
+3. **One rebuttal round-trip.** Disputes go back to the *same* Codex session (`codex exec resume`), so
+   Codex replies to the argument instead of forming a fresh opinion. It concedes, revises, or holds.
+4. **Approve advances, held disputes escalate.** On approve you get a one-line notice and the pipeline
+   moves — no waiting. On a hold, both positions come to you verbatim with no recommendation.
+
+Two properties make this safe to leave running:
+
+- **Codex unreachable → the gate reverts to a human gate.** The pipeline never advances a spec nobody
+  reviewed. (At Verify it degrades instead: the other three verifiers still gate the code.)
+- **A discovery KILL never reaches Codex.** Only you can overrule a KILL.
+
+Every exchange — findings, disputes, concessions on both sides — is logged to
+`docs/reviews/<slug>/gates.md`. That log is the audit trail that replaces your signature.
+
+**Standalone:** `/peer-review <path-or-ref>` runs the same loop on demand — a doc path uses the matching
+stage rubric, a git ref (or nothing) reviews the branch diff. Review only; it changes nothing.
+
+**Requires** the `codex` CLI on PATH, authenticated, **and configured with a model your CLI version and
+account can actually use** (`/codex:setup` from the
+[OpenAI Codex plugin](https://github.com/openai/codex-plugin-cc), or `codex login`). The plugin's own
+`/codex:*` commands are user-invocable only, so the agent shells out to the CLI directly.
+
+The agent preflights with a real round-trip rather than trusting `codex login status` — a stale CLI
+against a newer configured model (`model` in `~/.codex/config.toml`) authenticates fine and then fails
+on the first review. If the probe fails, gates fall back to human and the agent reports the CLI's own
+error rather than silently substituting a different model.
 
 ## Stack skills
 
@@ -218,9 +277,12 @@ this: `--update` assumes every `plugin`-kind entry under that key is already ins
 
 ```
 .claude-plugin/{marketplace,plugin}.json   # marketplace + plugin manifests
-agents/*.md                                # the 12 specialist agents (auto-discovered)
+agents/*.md                                # the 13 specialist agents (auto-discovered)
 skills/feature/SKILL.md                    # the /feature pipeline orchestrator
 commands/initialize.md                     # the /initialize project scaffolder
+commands/peer-review.md                    # the /peer-review standalone Codex peer review
+prompts/                                   # Codex rubrics — one per codex gate, plus the code brief
+schemas/                                   # JSON contracts for Codex review + rebuttal output
 hooks/                                     # PreToolUse guard enforcing the write boundaries
 templates/CLAUDE.md                        # the starter governance /initialize writes
 skills.manifest.json                       # stack + role → skills map

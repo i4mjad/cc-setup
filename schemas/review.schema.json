@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Codex review output — used for both spec-gate reviews (docs) and adversarial code review. quote applies to document gates; file/line_start/line_end apply to code review. OpenAI structured outputs requires EVERY property to be listed in `required`, so fields that do not apply to a given mode are nullable rather than optional — send null, not an omitted key. Do not add minLength/minimum/maximum here; they are rejected.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["verdict", "summary", "findings", "next_steps"],
+  "properties": {
+    "verdict": {
+      "type": "string",
+      "enum": ["approve", "needs-attention"]
+    },
+    "summary": {
+      "type": "string",
+      "description": "Terse ship/no-ship assessment. Lead with the claim; no preamble, no recap."
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "severity",
+          "title",
+          "body",
+          "recommendation",
+          "confidence",
+          "quote",
+          "file",
+          "line_start",
+          "line_end"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Short stable handle, e.g. X1, X2. The challenge round addresses findings by id."
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["blocker", "major", "minor"]
+          },
+          "title": { "type": "string" },
+          "body": { "type": "string" },
+          "recommendation": { "type": "string" },
+          "confidence": {
+            "type": "number",
+            "description": "0 to 1. Keep it honest — you will be asked to defend this finding."
+          },
+          "quote": {
+            "type": ["string", "null"],
+            "description": "Document gates: verbatim text from the artifact this finding is about. null when the finding is about content that is ABSENT, or in code-review mode."
+          },
+          "file": {
+            "type": ["string", "null"],
+            "description": "Code review: repo-relative path. null in document-gate mode."
+          },
+          "line_start": { "type": ["integer", "null"] },
+          "line_end": { "type": ["integer", "null"] }
+        }
+      }
+    },
+    "next_steps": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

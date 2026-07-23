@@ -86,6 +86,15 @@
         "ref": "mattpocock/skills@grill-me",
         "invoke": "/grill-me",
         "note": "Same ref the business-analyst uses — a project that already ran `/bootstrap roles` has it installed."
+      },
+      {
+        "name": "i-have-adhd",
+        "kind": "plugin",
+        "marketplace": "ayghri/i-have-adhd",
+        "marketplaceName": "i-have-adhd",
+        "plugin": "i-have-adhd",
+        "invoke": "/i-have-adhd:i-have-adhd",
+        "note": "MANDATORY for every document artifact this agent writes — see CLAUDE.md §6 'Artifact writing standard'. The codex gates check artifacts against it."
       }
     ],
     "business-analyst": [
@@ -101,6 +110,15 @@
         "ref": "mattpocock/skills@wayfinder",
         "invoke": "/wayfinder",
         "note": "For big multi-session efforts; charts decision tickets on an issue tracker. Needs a tracker configured — run /setup-matt-pocock-skills and pick github (via gh CLI), gitlab, or local markdown. No Linear tracker upstream."
+      },
+      {
+        "name": "i-have-adhd",
+        "kind": "plugin",
+        "marketplace": "ayghri/i-have-adhd",
+        "marketplaceName": "i-have-adhd",
+        "plugin": "i-have-adhd",
+        "invoke": "/i-have-adhd:i-have-adhd",
+        "note": "MANDATORY for every document artifact this agent writes — see CLAUDE.md §6 'Artifact writing standard'. The codex gates check artifacts against it."
       }
     ],
     "product-manager": [
@@ -115,6 +133,15 @@
         "kind": "skills-cli",
         "ref": "mattpocock/skills@to-tickets",
         "invoke": "/to-tickets"
+      },
+      {
+        "name": "i-have-adhd",
+        "kind": "plugin",
+        "marketplace": "ayghri/i-have-adhd",
+        "marketplaceName": "i-have-adhd",
+        "plugin": "i-have-adhd",
+        "invoke": "/i-have-adhd:i-have-adhd",
+        "note": "MANDATORY for every document artifact this agent writes — see CLAUDE.md §6 'Artifact writing standard'. The codex gates check artifacts against it."
       }
     ],
     "architect": [
@@ -123,6 +150,15 @@
         "kind": "skills-cli",
         "ref": "jeffallan/claude-skills@architecture-designer",
         "invoke": "/architecture-designer"
+      },
+      {
+        "name": "i-have-adhd",
+        "kind": "plugin",
+        "marketplace": "ayghri/i-have-adhd",
+        "marketplaceName": "i-have-adhd",
+        "plugin": "i-have-adhd",
+        "invoke": "/i-have-adhd:i-have-adhd",
+        "note": "MANDATORY for every document artifact this agent writes — see CLAUDE.md §6 'Artifact writing standard'. The codex gates check artifacts against it."
       }
     ],
     "designer": [
@@ -159,6 +195,15 @@
         "kind": "mcp",
         "invoke": "Mobbin MCP (pattern research)",
         "source": "MCP server — configure separately; not installed via bootstrap"
+      },
+      {
+        "name": "i-have-adhd",
+        "kind": "plugin",
+        "marketplace": "ayghri/i-have-adhd",
+        "marketplaceName": "i-have-adhd",
+        "plugin": "i-have-adhd",
+        "invoke": "/i-have-adhd:i-have-adhd",
+        "note": "MANDATORY for every document artifact this agent writes — see CLAUDE.md §6 'Artifact writing standard'. The codex gates check artifacts against it."
       }
     ],
     "code-reviewer": [
@@ -195,6 +240,17 @@
         "kind": "skills-cli",
         "ref": "secondsky/claude-skills@api-testing",
         "invoke": "/api-testing"
+      }
+    ],
+    "codex-reviewer": [
+      {
+        "name": "codex",
+        "kind": "plugin",
+        "marketplace": "openai/codex-plugin-cc",
+        "marketplaceName": "openai-codex",
+        "plugin": "codex",
+        "invoke": "the `codex` CLI (the agent shells out to `codex exec`; `/codex:setup` handles auth)",
+        "note": "The plugin's own /codex:* commands are user-invocable only (disable-model-invocation), so the agent uses the codex CLI directly. Without it the codex gates fall back to human gates."
       }
     ]
   }

@@ -14,25 +14,29 @@ repo is currently greenfield — no apps exist yet" or "Apps live under `apps/` 
 
 ## 2. The agent team & pipeline
 
-12 specialist agents run a discovery → build → verify pipeline, orchestrated by the
+13 specialist agents run a discovery → build → verify pipeline, orchestrated by the
 **`/feature`** skill (run by the main thread — there is no conductor agent). The **build agents are
 platform-scoped**: `frontend` (web), `ios`, `flutter`, and an adaptive `backend` — `/feature`
 dispatches only the ones whose platform is set in §5.
 
 ```
-  ┌── gate ──┐  ┌── gate ──┐   ┌── gate ──┐              ┌── gate, if UI ──┐
+  ┌ codex gate ┐ ┌ codex gate ┐  ┌ codex gate ┐          ┌ codex gate, if UI ┐
 discovery ▶ business-analyst ▶ product-manager ▶ architect ▶ designer ▶ frontend ┐
    │                                                                   ios       │
    │                                                                   flutter   ├─▶ completion-report
-   └── KILL ─▶ pipeline stops                                          backend   ┘        │
+   └── KILL ─▶ pipeline stops (yours to overrule)                      backend   ┘        │
                                         ┌── code-reviewer ──┐                            │
                                         ├── qa-tester ──────┤◀───────────────────────────┘
-                                        └── api-tester ─────┘
+                                        ├── api-tester ─────┤
+                                        └── codex-reviewer ─┘
                                                 │ (findings → /feature → review.md)
                                                 ▼
                                  routed fixes ─▶ frontend / ios / flutter / backend
                                                 │
                                      auto-loop ≤ 3 rounds, then report to user
+
+  codex gate = Codex reviews the artifact, codex-reviewer challenges it, pipeline advances on approve.
+  Only two gates still stop for you: the bootstrap interview and the phase plan.
 ```
 
 **Discovery runs first, on every initiative.** It challenges the idea against value → viability →
@@ -43,24 +47,38 @@ downstream.
 
 - **`/feature`** orchestrates (the main thread, not a subagent): assigns the initiative `<slug>`,
   invokes each agent in order, runs the **present** client agents (frontend/ios/flutter) + backend in
-  parallel and the three reviewers in parallel, writes the consolidated `review.md`, routes fixes,
-  loops, and stops at the human gates. It never does requirements, design, or coding itself. Start an
-  initiative with `/feature <brief>`.
+  parallel and the four reviewers in parallel, writes the consolidated `review.md` and `gates.md`,
+  routes fixes, loops, and stops only at the two human gates. It never does requirements, design, or
+  coding itself. Start an initiative with `/feature <brief>`.
 
 ### Handoff rules
 
 | Handoff | Type |
 |---|---|
 | bootstrap intake interview → pipeline (new project only) | **HUMAN GATE** — stop for user approval of the filled §4/§5 defaults |
-| discovery → business-analyst | **HUMAN GATE** — stop for user approval of the GO/PIVOT verdict; a **KILL stops the pipeline** |
+| discovery → business-analyst | **CODEX GATE** on GO/PIVOT — advances on approve, no wait. A **KILL stops the pipeline** and is yours alone to overrule; Codex never sees it |
 | scope check → phase plan (large scope only) | **HUMAN GATE** — stop for approval of the proposed phases (auto-proposed, not user-requested) |
-| business-analyst → product-manager | **HUMAN GATE** — stop for user approval |
-| product-manager → architect | **HUMAN GATE** — stop for user approval |
+| business-analyst → product-manager | **CODEX GATE** — advances on approve, no wait |
+| product-manager → architect | **CODEX GATE** — advances on approve, no wait |
 | architect → designer (only if the initiative has UI) | automatic |
-| designer → build agents | **HUMAN GATE** — stop for design approval (UI initiatives only) |
+| designer → build agents | **CODEX GATE** (UI initiatives only) — advances on approve, no wait |
 | architect / designer → frontend·ios·flutter + backend (present platforms) | automatic |
 | build agents → reviewers | automatic |
 | reviewers → build agents (routed fixes) | automatic, via `/feature` |
+| any codex gate → you | **HUMAN GATE**, but only on three conditions: Codex is unreachable, Codex held a finding against the peer challenge, or three rounds failed to clear it |
+
+**Codex gates replace your four spec approvals.** At each one, `/feature` dispatches **codex-reviewer**:
+Codex (GPT) reviews the artifact independently, then codex-reviewer challenges every finding against the
+document and rebuts what does not hold. One rebuttal round-trip, then:
+
+1. **Approve** → you get a one-line notice and the pipeline advances. Nothing waits on you.
+2. **Needs attention** → the authoring agent gets the surviving findings and rewrites. Max 3 rounds.
+3. **Codex held its position** against the challenge → both arguments come to you verbatim. You decide;
+   neither model wins by default.
+4. **Codex unreachable** → that gate becomes a human gate. The pipeline never advances unreviewed.
+
+The full exchange — findings, disputes, concessions — is logged to `docs/reviews/<slug>/gates.md`. That
+log is the audit trail that replaces your signature, so read it when you want to know why something passed.
 
 **Backward handoffs** are allowed and expected when work upstream is wrong/ambiguous:
 architect → product-manager, designer → product-manager, product-manager → business-analyst,
@@ -81,7 +99,7 @@ safe without you having to opt in.
 
 ## 3. Folder & naming conventions
 
-The pipeline machinery — the 12 agents, the `/feature` skill, the `/initialize` command, the stack-skill
+The pipeline machinery — the 13 agents, the `/feature` skill, the `/initialize` command, the stack-skill
 manifest, `bootstrap.sh`, and the artifact templates — is provided by the **cc-setup plugin** and is
 never copied here (agents reference it via `${CLAUDE_PLUGIN_ROOT}`). This project only holds this
 `CLAUDE.md` and the artifacts the pipeline writes:
@@ -97,6 +115,7 @@ docs/
   design/<slug>/design.md                   # designer's contract (UI initiatives)
   reports/<slug>/completion-report.md
   reports/<slug>/review.md
+  reviews/<slug>/gates.md                     # codex gate log — the audit trail for the four spec gates
 apps/        # client apps (web / mobile)
 services/    # backend services
 ```
@@ -158,6 +177,16 @@ a clear message describing what and why. Don't batch unrelated changes into one 
 until a whole task is finished: each self-contained increment that builds/passes is its own commit.
 This keeps history reviewable and every step easy to revert. The build agents (frontend, ios, flutter, backend)
 commit as they go; `/feature` never squashes these into a single end-of-task commit.
+
+**Artifact writing standard — mandatory.** Every document artifact the pipeline produces (discovery
+brief, business requirements, product spec, architecture spec, task files, design contract, completion
+report, reviews) is written for a reader with ADHD. The authoring agent **must** invoke
+**`/i-have-adhd:i-have-adhd`** and shape the artifact to it — this is not optional and not conditional
+on the document's length. In practice: lead with the decision or action, number anything multi-step,
+one bounded idea per bullet, no preamble and no closing recap, concrete numbers instead of vague
+qualifiers, and cap any list at five items (split into "now" vs "later" past that). Substance is never
+cut to hit the shape — an artifact that drops a requirement to look shorter has failed both standards.
+The codex gates check the artifact against this, so a wall-of-prose spec gets sent back.
 
 ## 7. Traceability spine (must be preserved end to end)
 

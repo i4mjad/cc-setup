@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # PreToolUse guard — mechanical enforcement of the pipeline's write boundaries:
-#   1. review.md is written only by the /feature orchestrator (main thread), never a subagent.
-#   2. Reviewers (code-reviewer, qa-tester, api-tester) never write or edit files.
+#   1. review.md and gates.md are written only by the /feature orchestrator (main thread), never a subagent.
+#   2. Reviewers (code-reviewer, qa-tester, api-tester, codex-reviewer) never write or edit files.
 #   3. Spec/design agents (discovery, business-analyst, product-manager, architect, designer) author
 #      docs, never application code under apps/ or services/.
 # Exit 2 blocks the tool call and returns the stderr message to the agent.
@@ -19,14 +19,14 @@ path="$(jq -r '.tool_input.file_path // .tool_input.notebook_path // empty' <<<"
 role="${agent##*:}" # strip a plugin namespace prefix like "cc-setup:"
 
 case "$path" in
-  */docs/reports/*/review.md | docs/reports/*/review.md)
-    echo "Blocked: review.md is written only by the /feature orchestrator (main thread). Return your findings to the orchestrator instead." >&2
+  */docs/reports/*/review.md | docs/reports/*/review.md | */docs/reviews/*/gates.md | docs/reviews/*/gates.md)
+    echo "Blocked: review.md and gates.md are written only by the /feature orchestrator (main thread). Return your findings to the orchestrator instead." >&2
     exit 2
     ;;
 esac
 
 case "$role" in
-  code-reviewer | qa-tester | api-tester)
+  code-reviewer | qa-tester | api-tester | codex-reviewer)
     echo "Blocked: $role is a read-only reviewer — report findings to the orchestrator; the build agents apply fixes." >&2
     exit 2
     ;;

@@ -1,7 +1,8 @@
 # Orchestration — the agent pipeline
 
 How the agent team runs. The **`/feature`** skill drives it (run by the main thread — there is no
-conductor agent); you are the approval gate. See `CLAUDE.md` for the full governance and
+conductor agent). **Codex is the approval gate on the four spec artifacts; you are the gate on the two
+that need your knowledge, and the tie-breaker when Codex and Claude disagree.** See `CLAUDE.md` for the full governance and
 the plugin's `agents/` for each agent's contract.
 
 ## Pipeline
@@ -9,18 +10,27 @@ the plugin's `agents/` for each agent's contract.
 ```
   ┌──── HUMAN GATE (new project) ────┐
   bootstrap interview → fills CLAUDE.md §4/§5 ──▶ (skipped if already configured)
-   ┌── GATE ──┐  ┌── GATE ──┐   ┌── GATE ──┐              ┌── GATE, if UI ──┐
+   ┌ CODEX ──┐  ┌ CODEX ──┐   ┌ CODEX ──┐              ┌ CODEX, if UI ──┐
 discovery ─▶ business-analyst ─▶ product-manager ─▶ architect ─▶ designer ─▶ frontend ┐
 (GO/PIVOT/KILL)  (interviews)      (Gherkin AC)    (owner tags)  (design.md)  ios     │
    │                                                                          flutter ├─▶ completion-report.md
    └── KILL ──▶ pipeline stops; /feature reports the verdict                  backend ┘        │
                                                                                                ▼
-   /feature consolidates → review.md    ◀── code-reviewer ‖ qa-tester ‖ api-tester
+   /feature consolidates → review.md  ◀── code-reviewer ‖ qa-tester ‖ api-tester ‖ codex-reviewer
                                                                                                │
               routed fixes ──▶ frontend / ios / flutter / backend ──▶ re-review
                                                                                                │
                               loop ≤ 3 rounds, then /feature reports to you
 ```
+
+**A codex gate is not a rubber stamp, and it is not a veto.** `/feature` dispatches **codex-reviewer**:
+Codex (GPT) reviews the artifact independently against a stage rubric, then codex-reviewer — Claude —
+reads the same artifact and challenges every finding, citing the line that defeats it. Disputes go back
+to the same Codex session for exactly one reply: concede, revise, or hold. Approve advances the pipeline
+with a one-line notice to you and no wait; needs-attention sends the artifact back to its author for up
+to 3 rounds; a held dispute comes to you as two positions with no recommendation. **If Codex is
+unreachable the gate reverts to a human gate** — nothing advances unreviewed. The whole exchange lands
+in `docs/reviews/<slug>/gates.md`.
 
 **Discovery gates the whole pipeline.** Every initiative starts there: it steelmans the idea, then
 interrogates value → viability → usability → feasibility in that order and returns
@@ -43,15 +53,16 @@ idea, not a new idea.
 | From | To | Gate | Carries |
 |---|---|---|---|
 | bootstrap interview (new project) | pipeline | **HUMAN** | filled CLAUDE.md §4/§5 (domain + stack), approved |
-| discovery | business-analyst | **HUMAN** | `docs/discovery/<slug>.md` — GO/PIVOT approved; **Handoff to BA** section only |
-| discovery | — (pipeline stops) | **HUMAN** | a KILL verdict; nothing is handed forward |
-| business-analyst | product-manager | **HUMAN** | business-requirements.md (approved) |
-| product-manager | architect | **HUMAN** | product-spec.md (approved) |
+| discovery | business-analyst | **CODEX** | `docs/discovery/<slug>.md` — GO/PIVOT approved by the gate; **Handoff to BA** section only |
+| discovery | — (pipeline stops) | **HUMAN** | a KILL verdict; nothing is handed forward, and no codex gate runs on it |
+| business-analyst | product-manager | **CODEX** | business-requirements.md (gate-approved) |
+| product-manager | architect | **CODEX** | product-spec.md (gate-approved) |
 | architect | designer (if UI) | auto | spec.md + owner-tagged tasks |
-| designer | build agents | **HUMAN** | design.md (approved) — UI initiatives only |
+| designer | build agents | **CODEX** | design.md (gate-approved) — UI initiatives only |
 | architect / designer | frontend·ios·flutter + backend (present) | auto | spec + tasks + design.md |
 | build agents | reviewers | auto | completion-report.md |
-| reviewers | `/feature` | auto | findings (owner + severity tagged) |
+| reviewers | `/feature` | auto | findings (owner + severity tagged); codex-reviewer adds its adjudication of each |
+| any codex gate | user | **HUMAN** | a held dispute, an unreachable Codex, or a gate still failing at round 3 |
 | `/feature` | frontend / ios / flutter / backend | auto | routed fixes (+ the AC each maps to) |
 | **backward:** architect → PM, designer → PM, PM → BA, BA → discovery, reviewer → build agent | — | auto | the ambiguity/defect |
 | **escalation:** any agent → user | **HUMAN** | — | a decision needing confirmation, not a guess |
@@ -67,6 +78,7 @@ idea, not a new idea.
 | Design | `docs/design/<slug>/design.md` (UI initiatives) |
 | Build | `docs/reports/<slug>/completion-report.md` (Web/iOS/Flutter/Backend owned sections) |
 | Verify | `docs/reports/<slug>/review.md` (`/feature`-written) |
+| Gates | `docs/reviews/<slug>/gates.md` (`/feature`-written — the codex-gate audit trail) |
 
 Templates for each live in `docs/_templates/` (including `design.template.md`). The `<slug>` is
 assigned by `/feature` at intake and is the traceability key.
@@ -76,8 +88,13 @@ assigned by `/feature` at intake and is the traceability key.
 - **Bootstrap before anything** on a new project: if CLAUDE.md §4/§5 still hold `<PLACEHOLDER>`s,
   `/feature` interviews you to fill them and stops at a human gate. Never inherit domain/stack defaults
   from a prior project. Skipped once the project is configured.
-- **Four pipeline human gates** (discovery→BA, BA→PM, PM→architect, designer→build for UI
-  initiatives). Everything else is automatic — except escalations.
+- **Four codex gates** (discovery→BA, BA→PM, PM→architect, designer→build for UI initiatives) and
+  **two human gates** (bootstrap, phase plan). Everything else is automatic — except escalations and
+  the three ways a codex gate hands the decision back to you: unreachable Codex, a held dispute, or a
+  gate still failing at round 3.
+- **Every document artifact is written to the artifact writing standard** (`CLAUDE.md` §6): the
+  authoring agent invokes `/i-have-adhd:i-have-adhd` and shapes the document to it. The codex gates
+  check this, so a wall-of-prose spec comes back as a finding.
 - **A KILL is a real stop.** Discovery's job is to be the friction, and a fast honest no is its most
   valuable output. `/feature` may not downgrade a KILL to "maybe later" — only you can overrule it.
 - **Escalate, don't assume.** When a decision needs confirmation, stop and ask the user.

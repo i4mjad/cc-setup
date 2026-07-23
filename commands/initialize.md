@@ -6,7 +6,7 @@ allowed-tools: Bash(test:*), Read, Write, Edit, AskUserQuestion
 
 <!--
 cc-setup init — materializes the ONE genuinely per-project file (CLAUDE.md). Everything else
-(the 12 agents, the /feature skill, the stack-skill manifest, bootstrap.sh, and the artifact
+(the 13 agents, the /feature skill, the stack-skill manifest, bootstrap.sh, and the artifact
 templates) lives in the plugin and is referenced by the agents via ${CLAUDE_PLUGIN_ROOT} — nothing
 else is copied into the project.
 

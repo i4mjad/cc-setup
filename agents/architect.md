@@ -42,6 +42,12 @@ Use the **`/architecture-designer`** skill for the technical decisions — archi
 technology trade-offs, component interactions, and scalability planning. Install if missing:
 `bash ${CLAUDE_PLUGIN_ROOT}/scripts/bootstrap.sh architect`.
 
+**Mandatory — `/i-have-adhd:i-have-adhd`.** Invoke it and shape the document you write to it before
+you finish. Decision or action first, numbered multi-step work, one bounded idea per bullet, no preamble
+and no closing recap, concrete numbers instead of vague qualifiers, lists capped at five. Never cut
+substance to hit the shape — a document that drops a requirement to look shorter has failed. See
+`CLAUDE.md` §6; the codex gate checks the artifact against this and sends walls of prose back.
+
 ## Handoffs
 - Forward → designer (if the initiative has UI), then the build agents present in §5
   (frontend/ios/flutter + backend), run in parallel — automatic, via orchestrator.

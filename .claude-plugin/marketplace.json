@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "cc-setup",
-      "description": "12-agent discovery→build→verify pipeline orchestrated by /feature, with an /initialize scaffolder and stack-keyed specialist skills.",
+      "description": "13-agent discovery→build→verify pipeline orchestrated by /feature, with an /initialize scaffolder and stack-keyed specialist skills.",
       "source": "./",
       "category": "workflow",
       "keywords": ["pipeline", "agents", "discovery", "requirements", "review", "scaffold", "clean-architecture"]
